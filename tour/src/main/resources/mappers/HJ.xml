@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Board">
+	<select id="hjBoardTotal" resultType="int">
+		select count(*) from Board
+	</select>
+	<select id="hjBoardList" parameterType="Board" resultType="Board">
+	select *
+		from (
+		   	  select rownum rn, a.*
+		  	  from (select b.* , m.m_nickname
+                    from   board b, member m 
+                    where b.m_id = m.m_id
+                    order by b_date, b_no) a
+		     )
+		where rn between #{start} and #{end}
+	</select>
+	<select id="hjBoardDetail" parameterType="int" resultType="Board">
+		select * from board where b_no = #{b_no}
+	</select>
+</mapper>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<typeAliases>
+		<typeAlias alias="Board" type="com.oracle.tour.dto.Board"/>
+		<typeAlias alias="Command" type="com.oracle.tour.dto.Command"/>
+		<typeAlias alias="Contents_like" type="com.oracle.tour.dto.Contents_like"/>
+		<typeAlias alias="Contents" type="com.oracle.tour.dto.Contents"/>
+		<typeAlias alias="Member" type="com.oracle.tour.dto.Member"/>
+		<typeAlias alias="Planner" type="com.oracle.tour.dto.Planner"/>
+		<typeAlias alias="Planner_Day" type="com.oracle.tour.dto.Planner_Day"/>
+	</typeAliases>
+</configuration>

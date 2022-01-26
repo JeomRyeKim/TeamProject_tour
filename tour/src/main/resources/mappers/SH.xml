@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="SHDao">
+	<select id="SHGetConList" parameterType="Contents" resultType="Contents" >
+		select * from contents
+	</select>
+	
+	<select id="SHTourList" parameterType="Contents" resultType="Contents">
+		select * from contents where c_category='관광지'
+	</select>
+	
+	<select id="SHHotelList" parameterType="Contents" resultType="Contents">
+		select * from contents where c_category='숙소'
+	</select>
+	
+	<select id="SHFoodList" parameterType="Contents" resultType="Contents">
+		select * from contents where c_category='음식점'
+	</select>
+	
+	<select id="SHLocalList" parameterType="java.lang.String" resultType="Contents">
+		select *  from contents where c_local = #{c_local}
+	</select>
+	
+	<select id="SHLocalTourList" parameterType="java.lang.String" resultType="Contents">
+		select *  from contents where c_local = #{c_local} and c_category='관광지'
+	</select>
+	
+	<select id="SHLocalHotelList" parameterType="java.lang.String" resultType="Contents">
+		select *  from contents where c_local = #{c_local} and c_category='숙소'
+	</select>
+	
+	<select id="SHLocalFoodList" parameterType="java.lang.String" resultType="Contents">
+		select *  from contents where c_local = #{c_local} and c_category='음식점'
+	</select>
+	
+</mapper>
