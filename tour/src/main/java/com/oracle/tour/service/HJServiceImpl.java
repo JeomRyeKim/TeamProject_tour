@@ -44,6 +44,14 @@ public class HJServiceImpl implements HJService {
 		return board;
 	}
 
+	@Override
+	public List<Board> getKindList(Board board, String kind) {
+		System.out.println("HJServiceImpl getKindList start");
+		List<Board> getKindList = hd.getKindList(board, kind);
+		
+		return getKindList;
+	}
+
 
 
 

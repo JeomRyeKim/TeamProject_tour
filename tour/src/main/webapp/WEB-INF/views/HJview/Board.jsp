@@ -1,14 +1,39 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<%@include file="boot.jsp" %>    
 <!DOCTYPE html>
+<%
+	String context = request.getContextPath();
+%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
+<script type="text/javascript">
+$(function(){
+    
+    $("input:button[name='button']").on('click',function(){
+        var kind = $(this).val();
+        $.ajax({
+            
+            url : "<%=context%>/BoardKind",
+            type : "post",
+            dataType:'json',
+            cache : false,
+            headers : {"cache-control":"no-cache","pragma":"no-cache"},
+            data : {"kind":kind},
+            success : function(data){
+                console.log(data);
+                $('body').html(data);
+            },
+            error : function(data){
+                alert('error');
+            }//error
+        })//ajax
+    });//button click
+    
+}); 
+</script>
 </head>
 <body>
 <%@include file="../header1.jsp" %>
@@ -18,6 +43,12 @@
 <pre>
 
 </pre>
+	<input type="button" name="button" value="전체" class="btn btn-outline-secondary" id="all">
+	<input type="button" name="button" value="자유" class="btn btn-outline-secondary" id="free">
+	<input type="button" name="button" value="후기" class="btn btn-outline-secondary" id="review">
+	<input type="button" name="button" value="QnA" class="btn btn-outline-secondary" id="qna">
+	
+	<input class="btn btn-outline-secondary btn-sm" style="float:right;" value="전체글 : ${total}">
 	<c:set var="num" value="${pg.total-pg.start+1}"></c:set>	
 
 <table class="table table-hover">
@@ -28,24 +59,32 @@
         <th>제목</th>
         <th>작성자</th>
         <th>작성일</th>
+        <th>좋아요</th>
         <th>조회수</th>
       </tr>
     </thead>
-    <c:forEach var="board" items="${listBoard}">
 	<tbody>
+    <c:forEach var="board" items="${listBoard}">
 	      <tr>
-	      	<c:set>
-	        	<td>${board.b_kind}</td>
-	        </c:set>
+	      	  <c:if test="${board.b_kind eq 1}">
+	        	<td>[자유]</td>
+	          </c:if>
+	      	  <c:if test="${board.b_kind eq 2}">
+	        	<td>[후기]</td>
+	          </c:if>
+	      	  <c:if test="${board.b_kind eq 3}">
+	        	<td>[QnA]</td>
+	          </c:if>
 	        <td>${board.b_no}</td>
 	        <td><a href="detail?b_no=${board.b_no}">${board.b_title}</td>
 	        <td>${board.m_nickname}</td>
 	        <td>${board.b_date}</td>
+	        <td>♥${board.b_like_cnt}</td>
 	        <td>${board.b_hit}</td>
 	      </tr>
+    </c:forEach>
     </tbody>
 	<c:set var="num" value="${num - 1}"></c:set>
-    </c:forEach>
 </table>
 <div align="center">
 	<c:if test="${pg.startPage > pg.pageBlock}">
@@ -58,8 +97,10 @@
 		<a href="Board?currentPage=${pg.startPage+pg.pageBlock}">[다음]</a>
 	</c:if>
 </div>
+	<input type="button" value="글쓰기" href="#" class="btn btn-outline-secondary" style="float:right;">
 </div>
 <pre>
+
 
 </pre>
 <%@include file="../footer.jsp" %>

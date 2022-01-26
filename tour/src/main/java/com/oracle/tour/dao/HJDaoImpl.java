@@ -29,7 +29,6 @@ public class HJDaoImpl implements HJDao {
 		return tot;
 	}
 
-
 	@Override
 	public List<Board> listBoard(Board board) {
 		List<Board> listBoard = null;
@@ -42,7 +41,6 @@ public class HJDaoImpl implements HJDao {
 		return listBoard;
 	}
 
-
 	@Override
 	public Board detail(int b_no) {
 		System.out.println("HJDaoImpl detail Start....");
@@ -52,7 +50,24 @@ public class HJDaoImpl implements HJDao {
 		} catch (Exception e) {
 			System.out.println("HJDaoImpl detail Exception->" + e.getMessage());
 		}
-		return null;
+		return board;
+	}
+
+	@Override
+	public List<Board> getKindList(Board board, String kind) {
+		System.out.println("HJDaoImpl getKindList start");
+		List<Board> getKindList = null;
+		try {
+			if(kind.equals("%전체%")) {
+				getKindList = session.selectList("hjBoardList", board);
+			}else {
+				getKindList = session.selectList("hjKindList", kind);
+			}
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl getKindList Exception->" + e.getMessage());
+		}
+		
+		return getKindList;
 	}
 
 

@@ -7,9 +7,11 @@ import com.oracle.tour.dto.Board;
 public interface HJDao {
 
 	int total();
-
+	
 	List<Board> listBoard(Board board);
 
 	Board detail(int b_no);
+
+	List<Board> getKindList(Board board, String kind);
 
 }

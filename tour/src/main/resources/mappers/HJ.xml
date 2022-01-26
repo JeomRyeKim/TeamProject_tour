@@ -20,4 +20,16 @@
 	<select id="hjBoardDetail" parameterType="int" resultType="Board">
 		select * from board where b_no = #{b_no}
 	</select>
+	<select id="hjKindList" parameterType="java.lang.String" resultType="Board">
+		select *
+		from (
+		   	  select rownum rn, a.*
+		  	  from (select b.* , m.m_nickname
+                    from   board b, member m 
+                    where b.m_id = m.m_id
+                    and b_kind like #{kind}
+                    order by b_date, b_no) a
+		     )
+		where rn between #{start} and #{end}
+	</select>
 </mapper>

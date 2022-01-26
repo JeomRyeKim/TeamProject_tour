@@ -13,7 +13,7 @@ spring:
   # Oracle Connect  
   datasource:
     url: jdbc:oracle:thin:@localhost:1521/xe
-    username: s20220103
+    username: S20220103
     password: tiger
     driver-class-name: oracle.jdbc.driver.OracleDriver
 
