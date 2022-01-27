@@ -6,30 +6,64 @@
 	<select id="hjBoardTotal" resultType="int">
 		select count(*) from Board
 	</select>
-	<select id="hjBoardList" parameterType="Board" resultType="Board">
-	select *
+	
+	<select id="hjBoardList1" parameterType="Board" resultType="Board">
+	  select *
 		from (
 		   	  select rownum rn, a.*
 		  	  from (select b.* , m.m_nickname
                     from   board b, member m 
                     where b.m_id = m.m_id
-                    order by b_date, b_no) a
+                    and #{items} like '% || #{search} || %'
+                    order by b_date desc, b_no) a
 		     )
 		where rn between #{start} and #{end}
 	</select>
-	<select id="hjBoardDetail" parameterType="int" resultType="Board">
-		select * from board where b_no = #{b_no}
-	</select>
-	<select id="hjKindList" parameterType="java.lang.String" resultType="Board">
-		select *
+	
+	<select id="hjBoardList2" parameterType="Board" resultType="Board">
+	    select *
 		from (
 		   	  select rownum rn, a.*
 		  	  from (select b.* , m.m_nickname
                     from   board b, member m 
                     where b.m_id = m.m_id
-                    and b_kind like #{kind}
-                    order by b_date, b_no) a
+                    and b_kind = #{b_kind}   
+                    order by b_date desc, b_no) a
 		     )
 		where rn between #{start} and #{end}
 	</select>
+	
+	<select id="hjBoardList1_old" parameterType="Board" resultType="Board">
+	  select *
+		from (
+		   	  select rownum rn, a.*
+		  	  from (select b.* , m.m_nickname
+                    from   board b, member m 
+                    where b.m_id = m.m_id
+                    order by b_date desc, b_no) a
+		     )
+		where rn between #{start} and #{end}
+	</select>
+	
+	<select id="hjBoardList2_old" parameterType="Board" resultType="Board">
+	    select *
+		from (
+		   	  select rownum rn, a.*
+		  	  from (select b.* , m.m_nickname
+                    from   board b, member m 
+                    where b.m_id = m.m_id
+                    and b_kind = #{b_kind}   
+                    order by b_date desc, b_no) a
+		     )
+		where rn between #{start} and #{end}
+	</select>
+	
+	<select id="hjBoardDetail" parameterType="Board" resultType="Board">
+		select b.*, m.m_nickname
+		from board b, member m
+		where b.m_id = m.m_id
+		and b.b_kind = ${b_kind}
+		and b.b_no = #{b_no}
+	</select>
+	
 </mapper>

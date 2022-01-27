@@ -10,8 +10,7 @@ public interface HJDao {
 	
 	List<Board> listBoard(Board board);
 
-	Board detail(int b_no);
+	Board detail(Board board);
 
-	List<Board> getKindList(Board board, String kind);
 
 }

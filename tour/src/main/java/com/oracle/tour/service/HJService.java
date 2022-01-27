@@ -10,9 +10,7 @@ public interface HJService {
 	
 	List<Board> listBoard(Board board);
 
-	Board detail(int b_no);
-
-	List<Board> getKindList(Board board, String kind);
+	Board detail(Board board);
 
 
 }

@@ -10,7 +10,7 @@ public class Board {
 	private int    b_no;		// 게시판(댓글) 번호
 	private String m_id;		// 회원 번호
 	private String b_title;		// 게시판(댓글) 제목
-	private String b_content;	// 게시판(댓글) 내용
+	private String b_contents;	// 게시판(댓글) 내용
 	private String b_date;		// 게시판(댓글) 작성일
 	private int    b_hit;		// 게시판 조회수
 	private String b_filename;	// 게시판(댓글) 파일(이미지)
@@ -24,7 +24,8 @@ public class Board {
 	//조회용
 	private int start;
 	private int end;
-	private String m_nickname;			// 회원 닉네임 - 게시판 리스트에서 조회
-
+	private String m_nickname;	// 회원 닉네임 - 게시판 리스트에서 조회
+	private String search;		// 검색란에 입력하는 값
+	private String items;		// 검색 종류 - 제목, 내용, 글쓴이 닉네임
 	
 }

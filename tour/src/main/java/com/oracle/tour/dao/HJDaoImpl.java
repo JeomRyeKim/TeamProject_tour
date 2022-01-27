@@ -33,8 +33,24 @@ public class HJDaoImpl implements HJDao {
 	public List<Board> listBoard(Board board) {
 		List<Board> listBoard = null;
 		System.out.println("HJDaoImpl listBoard Start....");
+		int b_kind = board.getB_kind();
+		String search = board.getSearch();
+		String items = board.getItems();
+		System.out.println("HJDaoImpl listBoard search : " + search);
+		System.out.println("HJDaoImpl listBoard items : " + items);
 		try {
-			listBoard = session.selectList("hjBoardList", board);
+			if(b_kind == 0)	{// 전체
+				// 검색을 안 하는 경우
+				if((items==null && search==null)||( items.length()==0 || search.length()==0)) {
+					listBoard = session.selectList("hjBoardList1_old", board);
+				} else { // 검색하는 경우
+					listBoard = session.selectList("hjBoardList1", board);
+				}
+			}else {// board 유형별
+				
+				listBoard = session.selectList("hjBoardList2", board);
+			}
+			
 		} catch (Exception e) {
 			System.out.println("HJDaoImpl listBoard Exception->" + e.getMessage());
 		}
@@ -42,33 +58,18 @@ public class HJDaoImpl implements HJDao {
 	}
 
 	@Override
-	public Board detail(int b_no) {
+	public Board detail(Board board) {
 		System.out.println("HJDaoImpl detail Start....");
-		Board board = null;
+		Board boardDetail = null;
 		try {
-			board = session.selectOne("hjBoardDetail", b_no);
+			boardDetail = session.selectOne("hjBoardDetail", board);
+			System.out.println("HJDaoImpl detail boardDetail.getM_nickname() : " + boardDetail.getM_nickname());
 		} catch (Exception e) {
 			System.out.println("HJDaoImpl detail Exception->" + e.getMessage());
 		}
-		return board;
+		return boardDetail;
 	}
 
-	@Override
-	public List<Board> getKindList(Board board, String kind) {
-		System.out.println("HJDaoImpl getKindList start");
-		List<Board> getKindList = null;
-		try {
-			if(kind.equals("%전체%")) {
-				getKindList = session.selectList("hjBoardList", board);
-			}else {
-				getKindList = session.selectList("hjKindList", kind);
-			}
-		} catch (Exception e) {
-			System.out.println("HJDaoImpl getKindList Exception->" + e.getMessage());
-		}
-		
-		return getKindList;
-	}
 
 
 	
