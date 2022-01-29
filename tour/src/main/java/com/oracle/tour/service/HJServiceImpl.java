@@ -37,9 +37,9 @@ public class HJServiceImpl implements HJService {
 	}
 
 	@Override
-	public Board detail(Board board) {
-		System.out.println("HJServiceImpl detail start..");
-		Board boardDetail = hd.detail(board);
+	public Board BoardDetail(Board board) {
+		System.out.println("HJServiceImpl BoardDetail start..");
+		Board boardDetail = hd.BoardDetail(board);
 		
 		return boardDetail;
 	}

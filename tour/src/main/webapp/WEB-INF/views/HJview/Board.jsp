@@ -10,33 +10,33 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 <script type="text/javascript">
-function getRadioButton(radBut) {
-	//alert('getRadioButton radBut-->'+radBut);
-	if (radBut == 'a' ) {
-		location.href = "http://localhost:9000/Board";
-	} else if (radBut == '1') {
-		location.href = "/Board?boardKindStr="+radBut;
-	} else if (radBut == '2') {
-		location.href = "/Board?boardKindStr="+radBut;
-	} else if (radBut == '3') {
-		location.href = "/Board?boardKindStr="+radBut;
-	}
-}
-
-// function checkForm(){
-// 	if(${sessionScope.sessionId==null}){ 
+function checkForm(){
+	var m_id = $('#m_id').val();
+	//alert("m_id->" + m_id);
+// 	if(${sessionScope.m_id == null}){ 
 // 		$('#myModal').modal('show');
 // 	}else{
-// 		location.href="./writeForm?m_id=${sessionScope.sessionId}";
+		location.href="./HJWriteForm?m_id=" + m_id;
 // 	}	
-// }
+}
 
-function SearchText(search){
-	var search = $('#search').val();
-	alert("search : " + search);
-	var items = $("#items option:selected").val();
-	alert("items : " + items);
-	location.href="/Board?"+items+"="+search;
+function SearchText(keyword){
+	var searchType = $("#searchType option:selected").val();
+	//alert("searchType->" + searchType);
+	var keyword = $('#keyword').val();
+	//alert("keyword->" + keyword);
+	var b_kind = $('#b_kind').val();
+	//alert("b_kind->" + b_kind);
+
+	if(!window.location.search.includes('boardKindStr')){ // 전체 검색시
+		//alert("!window.location.search.includes('boardKindStr')->전체 검색시");
+		location.href = "/HJBoard?searchType=" + searchType + "&keyword="+keyword;
+	}else if(window.location.search.includes('boardKindStr')) { // 유형별 검색시
+		//alert("window.location.search.includes('boardKindStr')->유형별 검색시");
+		location.href = "/HJBoard?boardKindStr=" + b_kind + "&searchType=" + searchType + "&keyword="+keyword;
+		$('#b_kind').val("");
+	}
+	
 }
 </script>
 </head>
@@ -48,12 +48,12 @@ function SearchText(search){
 <pre>
 
 </pre>
-	<label><input type="radio" name="radBut" value="a"  id="all"    onclick="getRadioButton('a')">전체</label>
-	<label><input type="radio" name="radBut" value="1"  id="free"   onclick="getRadioButton('1')">자유</label>
-	<label><input type="radio" name="radBut" value="2"  id="review" onclick="getRadioButton('2')">후기</label>
-	<label><input type="radio" name="radBut" value="3"  id="qna"    onclick="getRadioButton('3')">QnA</label>
+	<label><a class="btn btn-outline-secondary" name="radBut" value="a"  id="all"    onclick="location.href = '/HJBoard'">전체</a></label>
+	<label><a class="btn btn-outline-secondary" name="radBut" value="1"  id="free"   onclick="location.href = '/HJBoard?boardKindStr=1'">자유</a></label>
+	<label><a class="btn btn-outline-secondary" name="radBut" value="2"  id="review" onclick="location.href = '/HJBoard?boardKindStr=2'">후기</a></label>
+	<label><a class="btn btn-outline-secondary" name="radBut" value="3"  id="qna"    onclick="location.href = '/HJBoard?boardKindStr=3'">QnA</a></label>
 	
-	<input class="btn btn-outline-secondary btn-sm" style="float:right;" value="전체글 : ${total}" readonly>
+	<a class="btn btn-outline-secondary btn-sm" style="float:right;" readonly>전체글 : ${total}</a>
 	<c:set var="num" value="${pg.total-pg.start+1}"></c:set>	
 <!-- <form action="/boardSearch" method="post"> -->
 <table class="table table-hover">
@@ -70,6 +70,8 @@ function SearchText(search){
     </thead>
 	<tbody>
     <c:forEach var="board" items="${listBoard}">
+    	<input type="hidden" id="b_kind" value="${board.b_kind}">
+    	<input type="hidden" id="m_id" value="${board.m_id}">
 	      <tr id="bb">
 	      	  <c:if test="${board.b_kind eq 1}">
 	        	<td>[자유]</td>
@@ -81,7 +83,7 @@ function SearchText(search){
 	        	<td>[QnA]</td>
 	          </c:if>
 	        <td>${board.b_no}</td>
-	        <td><a href="detail?b_kind=${board.b_kind}&b_no=${board.b_no}">${board.b_title}</td>
+	        <td><a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_active_kind=${board.m_active_kind}&m_id=${board.m_id}">${board.b_title}</td>
 	        <td>${board.m_nickname}</td>
 	        <td>${board.b_date}</td>
 	        <td>
@@ -97,13 +99,13 @@ function SearchText(search){
 </table>
 <div align="center">
 	<c:if test="${pg.startPage > pg.pageBlock}">
-		<a href="Board?currentPage=${pg.startPage-pg.pageBlock}">[이전]</a>
+		<a href="HJBoard?currentPage=${pg.startPage-pg.pageBlock}">[이전]</a>
 	</c:if>
 	<c:forEach var="i" begin="${pg.startPage}" end="${pg.endPage}">
-		<a href="Board?currentPage=${i}">[${i}]</a>
+		<a href="HJBoard?currentPage=${i}">[${i}]</a>
 	</c:forEach>
 	<c:if test="${pg.endPage < pg.totalPage}">
-		<a href="Board?currentPage=${pg.startPage+pg.pageBlock}">[다음]</a>
+		<a href="HJBoard?currentPage=${pg.startPage+pg.pageBlock}">[다음]</a>
 	</c:if>
 </div>
 
@@ -111,13 +113,13 @@ function SearchText(search){
   <table>
     <tr>
       <td width="100%" align="left">&nbsp;&nbsp;
-        <select name="items" id="items" class="txt">
-          <option value="b_title" <c:if test="${items=='b_title'}">selected</c:if>>제목에서</option>
-          <option value="b_contents" <c:if test="${items=='b_contents'}">selected</c:if>>본문에서</option>
-          <option value="m_nickname" <c:if test="${items=='m_nickname'}">selected</c:if>>글쓴이에서</option>
+        <select name="searchType" id="searchType" class="txt">
+          <option value="b_title" <c:if test="${searchType=='b_title'}">selected</c:if>>제목에서</option>
+          <option value="b_contents" <c:if test="${searchType=='b_contents'}">selected</c:if>>본문에서</option>
+          <option value="m_nickname" <c:if test="${searchType=='m_nickname'}">selected</c:if>>글쓴이에서</option>
         </select>
-          <input type="search" id="search" name="search" value="${search}">
-          <input type="button" id="btnSearch" class="btn btn-outline-secondary btn-sm" value="검색" onclick="SearchText(${search})">
+          <input type="search" id="keyword" name="keyword" value="${keyword}">
+          <input type="button" id="btnSearch" class="btn btn-outline-secondary btn-sm" value="검색" onclick="SearchText(${keyword})">
       </td>
          <a href="#" onclick="checkForm(); return false;" class="btn btn-outline-primary" style="float:right;" >&laquo;글쓰기</a>
     </tr>
@@ -145,7 +147,7 @@ function SearchText(search){
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">아니오</button>
-        <button type="button" class="btn btn-outline-primary" onclick='javascript:location.href="./writeForm?m_id=${sessionScope.sessionId}"'>예</button>
+        <button type="button" class="btn btn-outline-primary" onclick='location.href="./memberLogin"'>예</button>
       </div>
     </div>
   </div>

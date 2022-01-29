@@ -10,7 +10,7 @@ public interface HJDao {
 	
 	List<Board> listBoard(Board board);
 
-	Board detail(Board board);
+	Board BoardDetail(Board board);
 
 
 }

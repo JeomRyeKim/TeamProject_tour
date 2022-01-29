@@ -44,7 +44,7 @@
 							</ul></li>
 						<li class="nav-item"><a class="nav-link" href="myPlanner">플래너 작성</a>
 						</li>
-						<li class="nav-item"><a class="nav-link" href="Board">게시판</a>
+						<li class="nav-item"><a class="nav-link" href="HJBoard">게시판</a>
 						</li>
 					</ul>
 				</div>

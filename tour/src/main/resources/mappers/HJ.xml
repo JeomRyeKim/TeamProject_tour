@@ -2,54 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="Board">
+<mapper namespace="com.oracle.tour.HJMapper">
 	<select id="hjBoardTotal" resultType="int">
 		select count(*) from Board
 	</select>
-	
-	<select id="hjBoardList1" parameterType="Board" resultType="Board">
-	  select *
-		from (
-		   	  select rownum rn, a.*
-		  	  from (select b.* , m.m_nickname
-                    from   board b, member m 
-                    where b.m_id = m.m_id
-                    and #{items} like '% || #{search} || %'
-                    order by b_date desc, b_no) a
-		     )
-		where rn between #{start} and #{end}
-	</select>
-	
-	<select id="hjBoardList2" parameterType="Board" resultType="Board">
-	    select *
-		from (
-		   	  select rownum rn, a.*
-		  	  from (select b.* , m.m_nickname
-                    from   board b, member m 
-                    where b.m_id = m.m_id
-                    and b_kind = #{b_kind}   
-                    order by b_date desc, b_no) a
-		     )
-		where rn between #{start} and #{end}
-	</select>
-	
+	<!-- 검색 안 하는 경우 -->	
 	<select id="hjBoardList1_old" parameterType="Board" resultType="Board">
 	  select *
 		from (
 		   	  select rownum rn, a.*
-		  	  from (select b.* , m.m_nickname
+		  	  from (select b.* , m.m_nickname, m.m_active_kind
                     from   board b, member m 
                     where b.m_id = m.m_id
                     order by b_date desc, b_no) a
 		     )
 		where rn between #{start} and #{end}
 	</select>
-	
 	<select id="hjBoardList2_old" parameterType="Board" resultType="Board">
 	    select *
 		from (
 		   	  select rownum rn, a.*
-		  	  from (select b.* , m.m_nickname
+		  	  from (select b.* , m.m_nickname, m.m_active_kind
                     from   board b, member m 
                     where b.m_id = m.m_id
                     and b_kind = #{b_kind}   
@@ -58,8 +31,84 @@
 		where rn between #{start} and #{end}
 	</select>
 	
+	<!-- 검색하는 경우 -->
+	<select id="hjBoardList1" parameterType="Board" resultType="Board">
+		  select *
+			from (
+			   	  select rownum rn, a.*
+			  	  from (select b.* , m.m_nickname, m.m_active_kind
+	                    from   board b, member m 
+	                    where b.m_id = m.m_id
+	                    <choose>
+						 	 <when test="searchType == 'b_title'">
+						    		AND b_title like '%' || #{keyword} || '%'    
+						   	 </when>
+						 	 <when test="searchType == 'b_contents'">
+						    		AND b_contents like '%' || #{keyword} || '%'    
+						   	 </when>
+						   	 <otherwise>
+						   	  	    AND m_nickname like '%' || #{keyword} || '%'   
+							 </otherwise>
+					    </choose>
+	                    order by b_date desc, b_no) a
+			     )
+			where rn between #{start} and #{end}
+	</select>
+	<select id="hjBoardList2" parameterType="Board" resultType="Board">
+	    select *
+		from (
+		   	  select rownum rn, a.*
+		  	  from (select b.* , m.m_nickname, m.m_active_kind
+                    from   board b, member m 
+                    where b.m_id = m.m_id
+                   	<choose>
+					 	 <when test="b_kind == 1 and searchType == 'b_title'">
+					    		AND b_kind = 1
+					    		AND b_title like '%' || #{keyword} || '%'    
+					   	 </when>
+					 	 <when test="b_kind == 1 and searchType == 'b_contents'">
+					    		AND b_kind = 1
+					    		AND b_contents like '%' || #{keyword} || '%'    
+					   	 </when>
+					 	 <when test="b_kind == 1 and searchType == 'm_nickname'">
+					    		AND b_kind = 1
+					    		AND m_nickname like '%' || #{keyword} || '%'    
+					   	 </when>
+					   	 
+					 	 <when test="b_kind == 2 and searchType == 'b_title'">
+					    		AND b_kind = 2
+					    		AND b_title like '%' || #{keyword} || '%'    
+					   	 </when>
+					 	 <when test="b_kind == 2 and searchType == 'b_contents'">
+					    		AND b_kind = 2
+					    		AND b_contents like '%' || #{keyword} || '%'    
+					   	 </when>
+					 	 <when test="b_kind == 2 and searchType == 'm_nickname'">
+					    		AND b_kind = 2
+					    		AND m_nickname like '%' || #{keyword} || '%'    
+					   	 </when>
+					   	 
+					 	 <when test="b_kind == 3 and searchType == 'b_title'">
+					    		AND b_kind = 3
+					    		AND b_title like '%' || #{keyword} || '%'    
+					   	 </when>
+					 	 <when test="b_kind == 3 and searchType == 'b_contents'">
+					    		AND b_kind = 3
+					    		AND b_contents like '%' || #{keyword} || '%'    
+					   	 </when>
+					 	 <otherwise>
+					    		AND b_kind = 3
+					    		AND m_nickname like '%' || #{keyword} || '%'    
+					   	 </otherwise>
+					</choose>
+                    order by b_date desc, b_no) a
+		     )
+		where rn between #{start} and #{end}
+	</select>
+
+	
 	<select id="hjBoardDetail" parameterType="Board" resultType="Board">
-		select b.*, m.m_nickname
+		select b.*, m.m_nickname, m.m_active_kind
 		from board b, member m
 		where b.m_id = m.m_id
 		and b.b_kind = ${b_kind}

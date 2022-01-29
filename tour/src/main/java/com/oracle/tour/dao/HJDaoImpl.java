@@ -34,23 +34,34 @@ public class HJDaoImpl implements HJDao {
 		List<Board> listBoard = null;
 		System.out.println("HJDaoImpl listBoard Start....");
 		int b_kind = board.getB_kind();
-		String search = board.getSearch();
-		String items = board.getItems();
-		System.out.println("HJDaoImpl listBoard search : " + search);
-		System.out.println("HJDaoImpl listBoard items : " + items);
+		String searchType = board.getSearchType();
+		String keyword = board.getKeyword();
+		System.out.println("HJDaoImpl listBoard searchType->" + searchType);
+		System.out.println("HJDaoImpl listBoard keyword->" + keyword);
 		try {
-			if(b_kind == 0)	{// 전체
-				// 검색을 안 하는 경우
-				if((items==null && search==null)||( items.length()==0 || search.length()==0)) {
+			if(b_kind == 0 )	{// board 전체 -> b_kind==0
+				  // 검색을 안 하는 경우
+				if((searchType==null && keyword==null)||(searchType.length()==0 || keyword.length()==0)) {
 					listBoard = session.selectList("hjBoardList1_old", board);
-				} else { // 검색하는 경우
+				} // 검색하는 경우 
+				else if((searchType!=null && keyword!=null)||(searchType.length()!=0 || keyword.length()!=0)) {
+					System.out.println("HJDaoImpl listBoard keyword 전체 검색시 hjBoardList1" );
 					listBoard = session.selectList("hjBoardList1", board);
+					System.out.println("hjBoardList1 listBoard.size()->" + listBoard.size());
 				}
-			}else {// board 유형별
-				
-				listBoard = session.selectList("hjBoardList2", board);
+			}else if (b_kind != 0) {// board 유형별  -> b_kind!=0
+				  // 검색을 안 하는 경우
+				if((searchType==null && keyword==null)||(searchType.length()==0 || keyword.length()==0)) {
+					System.out.println("hjBoardList2_old b_kind->" + b_kind);
+					listBoard = session.selectList("hjBoardList2_old", board);
+				} // 검색하는 경우
+				else if((searchType!=null && keyword!=null)||(searchType.length()!=0 || keyword.length()!=0)) {
+					System.out.println("HJDaoImpl listBoard keyword 유형별 검색시 hjBoardList2" );
+					System.out.println("hjBoardList2 b_kind->" + b_kind);
+					listBoard = session.selectList("hjBoardList2", board);
+					System.out.println("hjBoardList2 listBoard.size()->" + listBoard.size());
+				}
 			}
-			
 		} catch (Exception e) {
 			System.out.println("HJDaoImpl listBoard Exception->" + e.getMessage());
 		}
@@ -58,12 +69,13 @@ public class HJDaoImpl implements HJDao {
 	}
 
 	@Override
-	public Board detail(Board board) {
-		System.out.println("HJDaoImpl detail Start....");
+	public Board BoardDetail(Board board) {
+		System.out.println("HJDaoImpl BoardDetail Start....");
 		Board boardDetail = null;
 		try {
 			boardDetail = session.selectOne("hjBoardDetail", board);
-			System.out.println("HJDaoImpl detail boardDetail.getM_nickname() : " + boardDetail.getM_nickname());
+			System.out.println("HJDaoImpl detail boardDetail.getM_nickname()->" + boardDetail.getM_nickname());
+			System.out.println("HJDaoImpl detail boardDetail.getM_active_kind()->" + boardDetail.getM_active_kind());
 		} catch (Exception e) {
 			System.out.println("HJDaoImpl detail Exception->" + e.getMessage());
 		}
