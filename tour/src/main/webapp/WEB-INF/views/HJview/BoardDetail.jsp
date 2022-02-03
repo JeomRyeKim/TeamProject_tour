@@ -35,21 +35,25 @@
   <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
 </svg> ${boardDetail.b_like_cnt}
 <hr>
+<p>boardDetail.b_filename : ${boardDetail.b_filename}
+<p>boardDetail.savedName : ${boardDetail.savedName}
+<p><img src="" alt="게시판 이미지" width="500px" height="auto">
 <p>${boardDetail.b_contents}
 <pre>
 
 </pre>
 </div>
 
-    <div class="container ">
-	  <c:set var="userId" value="${boardDetail.m_id}" />
-<%-- 	  <c:if test="${sessionId==userId}"> --%>
+<div class="container ">
+  <c:choose>
+   <c:when test="${sessionScope.M_id == boardDetail.m_id}">
 	    <p>
 	      <a type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#exampleModal">삭제</a>
 		  <a type="submit" class="btn btn-outline-primary">수정</a>
-		  <a href="boardReply?m_id=${boardDetail.m_id}" class="btn btn-outline-success">답변</a>
-<%-- 	  </c:if> --%>
-	  <a href="/Board" class="btn btn-outline-secondary">목록</a>
+    </c:when>
+  </c:choose>
+		  <a href="boardReply?m_id=${sessionScope.M_id}" class="btn btn-outline-success">답변</a>
+	  <a href="/HJBoard" class="btn btn-outline-secondary">목록</a>
     </div>
 </form>
 <pre>

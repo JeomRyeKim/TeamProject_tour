@@ -1,5 +1,7 @@
 package com.oracle.tour.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,13 @@ public class WHServiceImpl implements WHService {
 		int result;
 		return result=whDao.login(member);
 	}
+	
+//	@Override
+//	public List<Member> getMemberList(String m_id) {
+//		List<Member> memberList = whDao.getMemberList(m_id);
+//		
+//		return memberList;
+//	}
 
 	
 }

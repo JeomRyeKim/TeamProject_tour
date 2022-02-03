@@ -6,4 +6,8 @@
 	<select id="WHLogin" parameterType="Member" resultType="int">
 		select count(*) from member where m_id=#{m_id} and m_password=#{m_password}
 	</select>
+	
+<!-- 	<select id="whMemberSelect" parameterType="java.lang.String" resultType="Member"> -->
+<!-- 		select * from member where m_id=#{m_id} -->
+<!-- 	</select> -->
 </mapper>

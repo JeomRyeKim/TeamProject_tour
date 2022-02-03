@@ -111,8 +111,23 @@
 		select b.*, m.m_nickname, m.m_active_kind
 		from board b, member m
 		where b.m_id = m.m_id
-		and b.b_kind = ${b_kind}
+		and b.b_kind = #{b_kind}
 		and b.b_no = #{b_no}
 	</select>
+	
+	<select id="hjNicknameSelect" parameterType="java.lang.String" resultType="java.lang.String">
+		select m_nickname from member where m_id = #{m_id}
+	</select>
+	
+	<insert id="hjBoardInsert" parameterType="Board">
+<!-- 		<selectKey keyProperty="b_no_seq" resultType="int" order="BEFORE"> -->
+<!-- 			select b_no_seq.nextval from dual -->
+<!-- 		</selectKey> -->
+<!-- 		<selectKey keyProperty="b_group_seq" resultType="int" order="BEFORE"> -->
+<!-- 			select b_group_seq.nextval from dual -->
+<!-- 		</selectKey> -->
+		insert into board values(#{b_kind}, b_no_seq, #{m_id}, #{b_title}, #{b_contents}, sysdate, 0,
+								 #{b_filename}, b_group_seq, 0, 0, #{b_notice}, #{b_lock}, null)
+	</insert>
 	
 </mapper>

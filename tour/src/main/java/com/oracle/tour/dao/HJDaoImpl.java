@@ -82,6 +82,31 @@ public class HJDaoImpl implements HJDao {
 		return boardDetail;
 	}
 
+	@Override
+	public String getNickname(String m_id) {
+		System.out.println("HJDaoImpl getNickname Start....");
+		String m_nickname = null;
+		try {
+			m_nickname = session.selectOne("hjNicknameSelect", m_id);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl getNickname Exception->" + e.getMessage());
+		}
+		
+		return null;
+	}
+
+	@Override
+	public int insert(Board board) {
+		System.out.println("HJDaoImpl insert Start....");
+		int result = 0;
+		try {
+			result = session.insert("hjBoardInsert", board);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl insert Exception->" + e.getMessage());
+		}
+		return result;
+	}
+
 
 
 	

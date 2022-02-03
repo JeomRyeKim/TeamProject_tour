@@ -1,33 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@include file="boot.jsp" %> 
+<%@include file="boot.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-    <!-- Bootstrap 5 CDN Link -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+.select_img img{margin: 20px 0;}
+</style>
+<script>
+$(document).ready(function(){
+	$("#b_lock").change(function(){         
+	        if($("#b_lock").is(":checked")){
+	           $("#b_lock").val("y");
+	           var b_lock = $("#b_lock").val();
+	           alert("b_lock->" + b_lock);
+	        }
+	    });
 
-    <!-- Summernote CSS - CDN Link -->
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-    <!-- //Summernote CSS - CDN Link -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Summernote JS - CDN Link -->
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
-    <script>
-    $(document).ready(function () {
-        $('#summernote').summernote({
-            placeholder: '내용을 작성하세요',
-            height: 400,
-            maxHeight: 400
-        });
-    });
-    </script>
-    <!-- //Summernote JS - CDN Link -->
+	});
+</script>
 </head>
 <body>
 <%@include file="../header1.jsp" %>
@@ -39,11 +32,12 @@
 
 
 </pre>
-<form action="write" method="post" name="frm" enctype="multipart/form-data">
+<c:if test="${msg!=null}">${msg}</c:if>
+<form id="writeFome" action="HJWrite" method="post" enctype="multipart/form-data">
 <table>
-	<tr>
-		<th class="row mt-1 mb-1" style="width:170px"><b align="center">옵션</b></th><td><input type="checkbox" name="b_lock" value="bLock"> 비밀글</td>
-	</tr>
+	<br>m_nickname : ${m_nickname}
+    <input type="hidden" id="m_nickname" name="m_nickname" value="${m_nickname}">
+    <input type="hidden" id="m_id" name="m_id" value="${sessionScope.M_id}">
 	<tr>
 		<th class="row mt-1 mb-1" style="width:170px"><b align="center">카테고리</b></th>
 		<td>
@@ -54,28 +48,36 @@
 		      <option class="dropdown-item" value="3">QnA</option>
 		      <option class="dropdown-item" value="4">공지사항</option>
 		    </select>
+		    <input type="checkbox" name="b_lock" value="n"> 비밀글
 	    </td>
 	</tr>
-	<tr>
-		<th class="row mt-1 mb-1" style="width:170px"><b align="center">닉네임</b></th>
-		<td>	 
-		<div class="form-floating-sm mb-2 mt-2">
-	      <input type="text" class="form-control" id="m_nickname" name="m_nickname" placeholder="닉네임을 입력해주세요" name="m_nickname">
-	    </div>
-	    </td>
-    </tr>
+<!-- 	<tr> -->
+<!-- 		<th class="row mt-1" style="width:170px"><b align="center">닉네임</b></th> -->
+<!-- 		<td>	  -->
+<!-- 		<div class="form-floating-sm mb-2 mt-2"> -->
+<!-- 	      <input type="text" class="form-control" id="m_nickname" name="m_nickname" placeholder="닉네임을 입력해주세요" name="m_nickname"> -->
+<!-- 	    </div> -->
+<!-- 	    </td> -->
+<!--     </tr> -->
     <tr>
     	<th class="row mt-1 mb-1" style="width:170px"><b align="center">제목</b></th>	 
 		<td>
 		<div class="form-floating-sm mb-2 mt-2">
-	      <input type="text" class="form-control" id="b_title" name="b_title" placeholder="제목을 입력해주세요" name="b_title">
+	      <input type="text" class="form-control" id="b_title" name="b_title" placeholder="제목을 입력해주세요" name="b_title" required>
 	    </div>
 	    </td>
     </tr>
     <tr>
     	<th class="row mt-1 mb-1" style="width:170px"><b align="center">내용</b></th> 
-		<td><textarea id="summernote" name="b_contents"></textarea></td>
+		<td><textarea id="b_contents" name="b_contents" style="width: 1100px; height: 400px;" required></textarea></td>
 	<tr>
+	<tr>
+    	<th class="row mt-1 mb-1" style="width:170px"><b align="center">첨부 파일</b></th>
+    	<td>
+			<input type="file" name="b_filename" id="b_filename">
+			<div class="select_img"><img style="width: 500px; height: auto;" id="img" name="img"></div>
+		</td>
+	</tr>
 </table>
 <pre>
 
@@ -88,5 +90,16 @@
 
 </pre>
 <%@include file="../footer.jsp" %>
+ <script>
+  $("#b_filename").change(function(){
+   if(this.files && this.files[0]) {
+    var reader = new FileReader;
+    reader.onload = function(data) {
+     $(".select_img img").attr("src", data.target.result).width(500);        
+    }
+    reader.readAsDataURL(this.files[0]);
+   }
+  });
+ </script>
 </body>
 </html>

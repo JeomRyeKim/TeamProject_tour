@@ -7,6 +7,7 @@ spring:
   # File Size
   servlet:
     multipart:
+      location: C:\\tour_image
       max-file-size: 20MB
       max-request-size: 20MB
 

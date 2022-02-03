@@ -1,5 +1,7 @@
 package com.oracle.tour.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -19,5 +21,11 @@ public class WHDaoImpl implements WHDao {
 		int result = sqlSession.selectOne("WHLogin",member);
 		return result;
 	}
+//	@Override
+//	public List<Member> getMemberList(String m_id) {
+//		List<Member> memberList = sqlSession.selectList("whMemberSelect", m_id);
+//		
+//		return memberList;
+//	}
 	
 }

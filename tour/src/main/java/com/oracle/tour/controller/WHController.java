@@ -1,5 +1,7 @@
 package com.oracle.tour.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -24,7 +26,7 @@ public class WHController {
 	}
 	
 	@RequestMapping(value = "memberLogin")
-	public String goLogin() {
+	public String goLogin(Member member, Model model) {
 		return "WHview/memberLogin";	
 	}
 	
@@ -78,12 +80,18 @@ public class WHController {
 		
 	}
 	@RequestMapping(value = "member/login" ,method = RequestMethod.POST)
-	public String memberLogin(Model model,HttpSession session,Member member) {
+	public String memberLogin( Model model,HttpSession session,Member member) {
 		System.out.println("WHController memberLogin start...");
 		int result = 0;
 		result = whService.login(member);
+		
 		if(result==1) {
+			String m_id = member.getM_id();
 			session.setAttribute("M_id", member.getM_id());
+//			List<Member> memberList = whService.getMemberList(m_id);
+//			System.out.println("memberLogin memberList.size()->" + memberList.size());
+//			model.addAttribute("memberList", memberList);
+			
 			return "WHview/memberLoginView";
 		}
 		model.addAttribute("msg","아이디와 비밀번호를 알려주세요");

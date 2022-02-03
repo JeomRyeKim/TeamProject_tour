@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@include file="boot.jsp" %>    
+<%@include file="boot.jsp" %> 
 <!DOCTYPE html>
 <%
 	String context = request.getContextPath();
@@ -10,14 +10,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 <script type="text/javascript">
-function checkForm(){
-	var m_id = $('#m_id').val();
-	//alert("m_id->" + m_id);
-// 	if(${sessionScope.m_id == null}){ 
-// 		$('#myModal').modal('show');
-// 	}else{
-		location.href="./HJWriteForm?m_id=" + m_id;
-// 	}	
+function titleIdCheck(){
+	alert("활동중인 회원만 열람 가능합니다");
+	location.href="/memberLogin";
 }
 
 function SearchText(keyword){
@@ -55,7 +50,9 @@ function SearchText(keyword){
 	
 	<a class="btn btn-outline-secondary btn-sm" style="float:right;" readonly>전체글 : ${total}</a>
 	<c:set var="num" value="${pg.total-pg.start+1}"></c:set>	
-<!-- <form action="/boardSearch" method="post"> -->
+<%-- 	<br>M_id : ${M_id} --%>
+	<br>sessionScope.M_id : ${sessionScope.M_id}
+	<br>sessionScope.m_nickname : ${sessionScope.m_nickname}
 <table class="table table-hover">
     <thead>
       <tr>
@@ -82,8 +79,18 @@ function SearchText(keyword){
 	      	  <c:if test="${board.b_kind eq 3}">
 	        	<td>[QnA]</td>
 	          </c:if>
+	      	  <c:if test="${board.b_kind eq 4}">
+	        	<td>[공지사항]</td>
+	          </c:if>
 	        <td>${board.b_no}</td>
-	        <td><a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_active_kind=${board.m_active_kind}&m_id=${board.m_id}">${board.b_title}</td>
+	        <c:choose>
+		        <c:when test="${not empty sessionScope.M_id}"> <%-- ${ }를 빼면 적용이 안 됨 --%>
+		        	<td><a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${sessionScope.M_id}">${board.b_title}</td>
+		        </c:when>
+		        <c:otherwise>
+		        	<td><a href="javascript:void(0);" onclick="titleIdCheck(); return false;">${board.b_title}</a></td>
+		        </c:otherwise>
+	        </c:choose>
 	        <td>${board.m_nickname}</td>
 	        <td>${board.b_date}</td>
 	        <td>
@@ -121,36 +128,20 @@ function SearchText(keyword){
           <input type="search" id="keyword" name="keyword" value="${keyword}">
           <input type="button" id="btnSearch" class="btn btn-outline-secondary btn-sm" value="검색" onclick="SearchText(${keyword})">
       </td>
-         <a href="#" onclick="checkForm(); return false;" class="btn btn-outline-primary" style="float:right;" >&laquo;글쓰기</a>
+	    <c:choose>
+	        <c:when test="${not empty sessionScope.M_id}"> <%-- ${ }를 빼면 적용이 안 됨 --%>
+	          <a onclick="location.href='./HJWriteForm?m_id=${sessionScope.M_id}&m_nickname=${m_nickname}'" class="btn btn-outline-primary" style="float:right;" >&laquo;글쓰기</a>
+	        </c:when>
+        </c:choose>
     </tr>
   </table>
 </div>
 
-<!-- </form> -->
 </div>
 <pre>
 
 
 </pre>
 <%@include file="../footer.jsp" %>
-<div class="modal" id="myModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">글쓰기</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>로그인 해주세요</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">아니오</button>
-        <button type="button" class="btn btn-outline-primary" onclick='location.href="./memberLogin"'>예</button>
-      </div>
-    </div>
-  </div>
-</div>
 </body>
 </html>

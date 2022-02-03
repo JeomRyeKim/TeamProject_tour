@@ -12,5 +12,9 @@ public interface HJDao {
 
 	Board BoardDetail(Board board);
 
+	String getNickname(String m_id);
+
+	int insert(Board board);
+
 
 }
