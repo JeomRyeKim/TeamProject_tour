@@ -1,11 +1,11 @@
 package com.oracle.tour.service;
 
-import java.util.List;
-
 import com.oracle.tour.dto.Member;
 
 public interface WHService {
-	int login(Member member);
-
-//	List<Member> getMemberList(String m_id);
+	Member login(Member member);
+	void memberJoin(Member member);
+	int idCheck(String m_id);
+	Member myInfo(Member member);
+	void pwChange(Member member);
 }

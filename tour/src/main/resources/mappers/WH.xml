@@ -3,11 +3,47 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.oracle.tour.dto">
-	<select id="WHLogin" parameterType="Member" resultType="int">
-		select count(*) from member where m_id=#{m_id} and m_password=#{m_password}
+	<select id="WHLogin" parameterType="Member" resultType="Member">
+	select m_id,m_active_kind,m_kind
+    from member
+    where m_id=#{m_id} and m_password=#{m_password}
+    union 
+    select m_id,m_active_kind,m_kind
+    FROM
+    (select distinct 'noUser' as m_id,0 m_active_kind,0  m_kind
+        from member
+        where not exists(select m_id,m_active_kind,m_kind
+                         from member
+                        where m_id=#{m_id} and m_password=#{m_password})
+     ) m
 	</select>
-	
-<!-- 	<select id="whMemberSelect" parameterType="java.lang.String" resultType="Member"> -->
-<!-- 		select * from member where m_id=#{m_id} -->
-<!-- 	</select> -->
+	<insert id="WHjoin" parameterType="Member">
+	insert into member(m_id,m_nickname,m_password,m_phone,m_email,m_birth,m_gender,m_date)
+	  values (#{m_id},#{m_nickname},#{m_password},#{m_phone1}||#{m_phone2}||#{m_phone3},#{m_email},#{m_birth},#{m_gender},sysdate)
+	</insert>
+	<select id="WHidCheck" parameterType="java.lang.String" resultType="int">
+	select count(*) 
+	from member 
+	where m_id=#{m_id}
+	</select>
+	<select id="WHmyInfo" parameterType="Member" resultType="Member">
+	select * 
+	from member
+	where m_id=#{m_id}
+	</select>
+	<update id="WHpwChange" parameterType="Member">
+	update member 
+	set m_password=#{m_password},m_active_kind=1
+	where m_id=#{m_id}
+	</update>
+	<update id="WHTpPw" parameterType="Member">
+	update member
+	set m_password=#{m_password},m_active_kind=2
+	where m_id=#{m_id} and m_email=#{m_email}
+	</update>
+	<select id="WHemailCheck" parameterType="Member" resultType="int">
+	select count(*)
+	from member
+	where m_id=#{m_id} and m_email=#{m_email}
+	</select>
 </mapper>

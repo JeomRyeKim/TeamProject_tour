@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.oracle.tour.dto.Board;
+import com.oracle.tour.dto.Member;
 import com.oracle.tour.service.HJService;
 import com.oracle.tour.service.Paging;
 
@@ -30,22 +32,26 @@ public class HJController {
 	public HJController(HJService hs) {
 		this.hs = hs;
 	}
-
+	
 	@GetMapping(value = "/HJBoard")
 	public String BoardList(Board board, String boardKindStr, String searchType, String keyword, 
-							String currentPage, Model model) {
+							String currentPage, Model model, Member member, String m_id, 
+							HttpServletRequest request) {
 		logger.info("BoardList start");
 		
+		System.out.println("로그인을 한 상태라면 출력값이 있을 것 - m_id->" + m_id);
+	
 		int total = hs.total();
 		int boardKind = 0;
-		if(boardKindStr != null)  boardKind = Integer.parseInt(boardKindStr);
+		if(boardKindStr != null) { 
+			boardKind = Integer.parseInt(boardKindStr);
+		}
 		
 		System.out.println("HJController BoardList total->" + total);
 		System.out.println("HJController BoardList currentPage->" + currentPage);
 		System.out.println("HJController BoardList boardKindString->" + boardKind);
 		System.out.println("HJController BoardList keyword->" + keyword);
 		System.out.println("HJController BoardList searchType->" + searchType);
-		System.out.println("HJController BoardList board.getM_active_kind()->" + board.getM_active_kind());
 		
 		Paging pg = new Paging(total, currentPage);
 		board.setStart(pg.getStart());
@@ -56,22 +62,32 @@ public class HJController {
 		List<Board> listBoard = hs.listBoard(board);
 		System.out.println("HJController BoardList listBoard.size()->" + listBoard.size());
 		
-//		String m_nickname = hs.getNickname(m_id);
-//		System.out.println("WriteForm getNickname->" + m_nickname);
-//		model.addAttribute("m_nickname", m_nickname);
 		model.addAttribute("listBoard", listBoard);
 		model.addAttribute("pg", pg);
 		model.addAttribute("total", total);
 		model.addAttribute("radioButton", "a");
-
+		
+		System.out.println("!StringUtils.isEmpty(m_id)->" + !StringUtils.isEmpty(m_id)); // false
+		
+		if(!StringUtils.isEmpty(m_id)){
+			System.out.println("세션 아이디 값이 있을 때 - HJController BoardList getMemberDetail start");
+			member = hs.getMemberDetail(m_id);
+			System.out.println("HJController BoardList getMemberDetail member.getM_id()->" + member.getM_id());
+			System.out.println("HJController BoardList getMemberDetail member.getM_active_kind()->" + member.getM_active_kind());
+			System.out.println("HJController BoardList getMemberDetail member.getM_nickname()->" + member.getM_nickname());
+			System.out.println("HJController BoardList getMemberDetail member.getM_kind()->" + member.getM_kind());
+			model.addAttribute("member", member);
+		}
+		
 		return "HJview/Board";
 	}
 	
 	@GetMapping("/HJBoardDetail")
 	public String BoardDetail(Board board, Model model) {
 		logger.info("BoardDetail start");
-		Board boardDetail = hs.BoardDetail(board);
-		System.out.println("HJController BoardDetail boardDetail.getB_title() : " + boardDetail.getB_title());
+		// 파라미터를 Board board로 보내는 이유는 board의 b_kind와 b_no가 복합키라 2개의 파라미터를 값으로 보내야하기 때문
+		Board boardDetail = hs.BoardDetail(board); 
+		System.out.println("HJController BoardDetail boardDetail.getB_title()->" + boardDetail.getB_title());
 		model.addAttribute("boardDetail", boardDetail);
 
 		return "HJview/BoardDetail";
@@ -178,18 +194,31 @@ public class HJController {
 	
 	
 	@PostMapping(value = "/HJBoardmodify")
-	public String Boardmodify() {
+	public String Boardmodify(Model model) {
 		logger.info("Boardmodify start");
 		
 		
 		return "redirect:HJBoard";
 	}	
 	
-	@RequestMapping("/HJboardReply")
-	public String boardReply() {
-		logger.info("boardReply start");
+	@RequestMapping("/HJboardReply_view")
+	public String boardReply_view(Board board, Model model) {
+		logger.info("boardReply_view start");
+		
+		Board boardDetail = hs.BoardDetail(board); 
+		System.out.println("HJController boardReply_view boardDetail.getB_title()->" + boardDetail.getB_title());
+		System.out.println("HJController boardReply_view boardDetail.getM_kind()->" + boardDetail.getM_kind());
+		model.addAttribute("boardDetail", boardDetail);
 		
 		return "HJview/boardReply";
+	}
+	
+	@RequestMapping("/HJboardReply")
+	public String boardReply(Board board, Model model) {
+		logger.info("boardReply start");
+		
+		
+		return "forward:HJBoard";
 	}
 	
 	

@@ -28,5 +28,6 @@ public class Board {
 	private String searchType;		// 검색 종류 - 제목, 내용, 글쓴이 닉네임
 	private String keyword;			// 검색란에 입력하는 값
 	private int    m_active_kind;	// 활동 여부 - 1:활동중인 회원, 2:임시 회원, 3:탈퇴한 회원
+	private int    m_kind;			// 회원 유형 - 1:사용자, 2:관리자..
 	
 }

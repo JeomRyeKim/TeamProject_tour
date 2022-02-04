@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.oracle.tour.dto.Board;
+import com.oracle.tour.dto.Member;
 
 @Repository
 public class HJDaoImpl implements HJDao {
@@ -16,6 +17,18 @@ public class HJDaoImpl implements HJDao {
 		this.session = session;
 	}
 
+	@Override
+	public Member getMemberDetail(String m_id) {
+		System.out.println("HJDaoImpl getMemberDetail start");
+		Member member = null;
+		try {
+			member = session.selectOne("hjMemberDetail", m_id);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl getMemberDetail Exception->" + e.getMessage());
+		}
+		return member;
+	}
+	
 	@Override
 	public int total() {
 		int tot = 0;
@@ -106,6 +119,7 @@ public class HJDaoImpl implements HJDao {
 		}
 		return result;
 	}
+
 
 
 

@@ -14,7 +14,6 @@
 </script>
 </head>
 <body>
-<%-- m_nickname : ${memberList.m_nickname} --%>
-<%-- m_id : ${memberList.m_id} --%>
+
 </body>
 </html>

@@ -8,7 +8,7 @@
 		<typeAlias alias="Contents_like" type="com.oracle.tour.dto.Contents_like"/>
 		<typeAlias alias="Contents" type="com.oracle.tour.dto.Contents"/>
 		<typeAlias alias="Member" type="com.oracle.tour.dto.Member"/>
-		<typeAlias alias="Planner" type="com.oracle.tour.dto.Planner"/>
-		<typeAlias alias="Planner_Day" type="com.oracle.tour.dto.Planner_Day"/>
+		<typeAlias alias="PlannerDTO" type="com.oracle.tour.dto.PlannerDTO"/>
+		<typeAlias alias="PlanDTO" type="com.oracle.tour.dto.PlanDTO"/>
 	</typeAliases>
 </configuration>

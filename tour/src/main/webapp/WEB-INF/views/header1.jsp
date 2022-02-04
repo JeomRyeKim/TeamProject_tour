@@ -28,7 +28,7 @@
 					<ul class="navbar-nav">
 						<%-- 	<c:choose> --%>
 						<%--   	  <c:when test="${empty sessionId}"> --%>
-						<li class="nav-item"><a class="nav-ling" >${sessionScope.M_id}</a>
+						<li class="nav-item"><a class="nav-ling" >${sessionScope.m_id}</a>
 						<li class="nav-item"><a class="nav-link" href="memberLogin">로그인</a>
 						</li>
 						<li class="nav-item"><a class="nav-link" href="memberJoin">회원가입</a></li>
@@ -44,8 +44,14 @@
 							</ul></li>
 						<li class="nav-item"><a class="nav-link" href="myPlanner">플래너 작성</a>
 						</li>
-						<li class="nav-item"><a class="nav-link" href="HJBoard">게시판</a>
-						</li>
+<%-- 						<c:choose> --%>
+<%-- 							<c:when test="${not empty sessionScope.m_id}"> --%>
+								<li class="nav-item"><a class="nav-link" href="HJBoard?m_id=${sessionScope.m_id}">게시판</a></li>
+<%-- 							</c:when> --%>
+<%-- 							<c:otherwise> --%>
+<!-- 								<li class="nav-item"><a class="nav-link" href="/HJBoard">게시판</a></li> -->
+<%-- 							</c:otherwise> --%>
+<%-- 						</c:choose> --%>
 					</ul>
 				</div>
 			</div>

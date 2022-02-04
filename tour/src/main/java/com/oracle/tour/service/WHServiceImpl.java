@@ -1,7 +1,5 @@
 package com.oracle.tour.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,18 +16,34 @@ public class WHServiceImpl implements WHService {
 		this.whDao = whDao;
 	}
 	@Override
-	public int login(Member member) {
+	public Member login(Member member) {
 		System.out.println("WHServiceImpl login start..");
-		int result;
-		return result=whDao.login(member);
+		return member=whDao.login(member);
 	}
-	
-//	@Override
-//	public List<Member> getMemberList(String m_id) {
-//		List<Member> memberList = whDao.getMemberList(m_id);
-//		
-//		return memberList;
-//	}
+	@Override
+	public void memberJoin(Member member) {
+		System.out.println("WHServiceImpl memberJoin start...");
+		whDao.memberJoin(member);
+		
+	}
+	@Override
+	public int idCheck(String m_id) {
+		System.out.println("WHServiceImpl idCheck start...");
+		int result=0;
+		result=whDao.idCheck(m_id);
+		return result;
+	}
+	@Override
+	public Member myInfo(Member member) {
+		System.out.println("WHServiceImpl myInfo start..");
+		member=whDao.myInfo(member);
+		return member;
+	}
+	@Override
+	public void pwChange(Member member) {
+		System.out.println("WHServiceImpl pwChange start... ");
+		whDao.pwChange(member);
+	}
 
 	
 }

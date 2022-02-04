@@ -33,11 +33,14 @@ $(document).ready(function(){
 
 </pre>
 <c:if test="${msg!=null}">${msg}</c:if>
-<form id="writeFome" action="HJWrite" method="post" enctype="multipart/form-data">
+<form id="writeFome" action="/HJWrite?m_id=${sessionScope.m_id}"
+	  method="post" enctype="multipart/form-data">
 <table>
-	<br>m_nickname : ${m_nickname}
-    <input type="hidden" id="m_nickname" name="m_nickname" value="${m_nickname}">
-    <input type="hidden" id="m_id" name="m_id" value="${sessionScope.M_id}">
+	<br>param.m_nickname : ${param.m_nickname}
+	<br>m_id : ${m_id}
+    <input type="hidden" id="m_nickname" name="m_nickname" value="${sessionScope.m_nickname}">
+    <input type="hidden" id="m_id" name="m_id" value="${sessionScope.m_id}">
+    <input type="hidden" id="m_kind" name="m_kind" value="${sessionScope.m_kind}">
 	<tr>
 		<th class="row mt-1 mb-1" style="width:170px"><b align="center">카테고리</b></th>
 		<td>
@@ -46,19 +49,13 @@ $(document).ready(function(){
 		      <option class="dropdown-item" value="1">자유</option>
 		      <option class="dropdown-item" value="2">후기</option>
 		      <option class="dropdown-item" value="3">QnA</option>
-		      <option class="dropdown-item" value="4">공지사항</option>
+		      <c:if test="${sessionScope.m_kind == 2}">
+	      		<option class="dropdown-item" value="4">공지사항</option>
+		      </c:if>
 		    </select>
 		    <input type="checkbox" name="b_lock" value="n"> 비밀글
 	    </td>
 	</tr>
-<!-- 	<tr> -->
-<!-- 		<th class="row mt-1" style="width:170px"><b align="center">닉네임</b></th> -->
-<!-- 		<td>	  -->
-<!-- 		<div class="form-floating-sm mb-2 mt-2"> -->
-<!-- 	      <input type="text" class="form-control" id="m_nickname" name="m_nickname" placeholder="닉네임을 입력해주세요" name="m_nickname"> -->
-<!-- 	    </div> -->
-<!-- 	    </td> -->
-<!--     </tr> -->
     <tr>
     	<th class="row mt-1 mb-1" style="width:170px"><b align="center">제목</b></th>	 
 		<td>
@@ -83,7 +80,7 @@ $(document).ready(function(){
 
 </pre>
 	<input type="submit" value="입력" class="btn btn-outline-primary">
-	<a href="/HJBoard" class="btn btn-outline-secondary">목록보기</a> 
+	<a href="/HJBoard?m_id=${sessionScope.m_id}" class="btn btn-outline-secondary">목록</a> 
 </form>
 </div>
 <pre>

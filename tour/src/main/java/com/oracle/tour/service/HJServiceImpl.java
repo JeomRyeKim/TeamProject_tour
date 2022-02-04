@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.oracle.tour.dao.HJDao;
 import com.oracle.tour.dto.Board;
+import com.oracle.tour.dto.Member;
 
 @Service
 @Transactional
@@ -19,6 +20,14 @@ public class HJServiceImpl implements HJService {
 		this.hd = hd;
 	}
 
+	@Override
+	public Member getMemberDetail(String m_id) {
+		System.out.println("HJServiceImpl getMemberDetail start..");
+		Member member = hd.getMemberDetail(m_id);
+		
+		return member;
+	}
+	
 	@Override
 	public int total() {
 		System.out.println("HJServiceImpl total start..");
@@ -59,6 +68,7 @@ public class HJServiceImpl implements HJService {
 		
 		return result;
 	}
+
 
 
 

@@ -3,6 +3,10 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.oracle.tour.HJMapper">
+	<select id="hjMemberDetail" parameterType="String" resultType="Member">
+		select * from member where m_id=#{m_id}
+	</select>
+
 	<select id="hjBoardTotal" resultType="int">
 		select count(*) from Board
 	</select>
@@ -108,7 +112,7 @@
 
 	
 	<select id="hjBoardDetail" parameterType="Board" resultType="Board">
-		select b.*, m.m_nickname, m.m_active_kind
+		select b.*, m.m_nickname, m.m_active_kind, m_kind
 		from board b, member m
 		where b.m_id = m.m_id
 		and b.b_kind = #{b_kind}

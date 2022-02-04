@@ -10,11 +10,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 <script type="text/javascript">
-function titleIdCheck(){
-	alert("활동중인 회원만 열람 가능합니다");
-	location.href="/memberLogin";
-}
-
 function SearchText(keyword){
 	var searchType = $("#searchType option:selected").val();
 	//alert("searchType->" + searchType);
@@ -33,6 +28,24 @@ function SearchText(keyword){
 	}
 	
 }
+
+function writeCheck(){
+	var m_id = $('#id').val();
+	var m_nickname = $('#nickname').val();
+	var m_kind = $('#kind').val();
+	var m_active_kind = $('#active_kind').val();
+// 	alert("m_id->" + m_id);
+// 	alert("m_nickname->" + m_nickname);
+// 	alert("m_kind->" + m_kind);
+// 	alert("m_active_kind->" + m_active_kind);
+	
+	if((m_id != null || m_id != "" || !StringUtils.isEmpty(m_id)) && m_active_kind == 1) {
+		location.href="./HJWriteForm?m_id=" + m_id + "&m_nickname=" + m_nickname + "&m_kind=" + m_kind;
+	} else {
+		alert("활동중인 회원만 게시글 작성이 가능합니다");
+// 		location.href="HJBoard?m_id=${sessionScope.m_id}"
+	}
+}
 </script>
 </head>
 <body>
@@ -49,10 +62,12 @@ function SearchText(keyword){
 	<label><a class="btn btn-outline-secondary" name="radBut" value="3"  id="qna"    onclick="location.href = '/HJBoard?boardKindStr=3'">QnA</a></label>
 	
 	<a class="btn btn-outline-secondary btn-sm" style="float:right;" readonly>전체글 : ${total}</a>
-	<c:set var="num" value="${pg.total-pg.start+1}"></c:set>	
-<%-- 	<br>M_id : ${M_id} --%>
-	<br>sessionScope.M_id : ${sessionScope.M_id}
-	<br>sessionScope.m_nickname : ${sessionScope.m_nickname}
+	<c:set var="num" value="${pg.total-pg.start+1}"></c:set>
+		
+	<br>m_id : ${member.m_id}
+	<br>m_nickname : ${member.m_nickname}
+	<br>m_kind : ${member.m_kind}
+	<br>m_active_kind : ${member.m_active_kind}
 <table class="table table-hover">
     <thead>
       <tr>
@@ -67,8 +82,12 @@ function SearchText(keyword){
     </thead>
 	<tbody>
     <c:forEach var="board" items="${listBoard}">
-    	<input type="hidden" id="b_kind" value="${board.b_kind}">
-    	<input type="hidden" id="m_id" value="${board.m_id}">
+    	<input type="hidden" id="id" value="${member.m_id}">
+    	<input type="hidden" id="nickname" value="${member.m_nickname}">
+    	<input type="hidden" id="kind" value="${member.m_kind}">
+    	<input type="hidden" id="active_kind" value="${member.m_active_kind}">
+<%--     	<input type="hidden" id="b_kind" value="${board.b_kind}"> --%>
+<%--     	<input type="hidden" id="m_id" value="${board.m_id}"> --%>
 	      <tr id="bb">
 	      	  <c:if test="${board.b_kind eq 1}">
 	        	<td>[자유]</td>
@@ -83,14 +102,7 @@ function SearchText(keyword){
 	        	<td>[공지사항]</td>
 	          </c:if>
 	        <td>${board.b_no}</td>
-	        <c:choose>
-		        <c:when test="${not empty sessionScope.M_id}"> <%-- ${ }를 빼면 적용이 안 됨 --%>
-		        	<td><a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${sessionScope.M_id}">${board.b_title}</td>
-		        </c:when>
-		        <c:otherwise>
-		        	<td><a href="javascript:void(0);" onclick="titleIdCheck(); return false;">${board.b_title}</a></td>
-		        </c:otherwise>
-	        </c:choose>
+        	<td><a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}">${board.b_title}</td>
 	        <td>${board.m_nickname}</td>
 	        <td>${board.b_date}</td>
 	        <td>
@@ -106,21 +118,20 @@ function SearchText(keyword){
 </table>
 <div align="center">
 	<c:if test="${pg.startPage > pg.pageBlock}">
-		<a href="HJBoard?currentPage=${pg.startPage-pg.pageBlock}">[이전]</a>
+		<a href="HJBoard?currentPage=${pg.startPage-pg.pageBlock}&m_id=${member.m_id}">[이전]</a>
 	</c:if>
 	<c:forEach var="i" begin="${pg.startPage}" end="${pg.endPage}">
-		<a href="HJBoard?currentPage=${i}">[${i}]</a>
+		<a href="HJBoard?currentPage=${i}&m_id=${member.m_id}">[${i}]</a>
 	</c:forEach>
 	<c:if test="${pg.endPage < pg.totalPage}">
-		<a href="HJBoard?currentPage=${pg.startPage+pg.pageBlock}">[다음]</a>
+		<a href="HJBoard?currentPage=${pg.startPage+pg.pageBlock}&m_id=${member.m_id}">[다음]</a>
 	</c:if>
 </div>
 
-<div align = "left">
   <table>
     <tr>
-      <td width="100%" align="left">&nbsp;&nbsp;
-        <select name="searchType" id="searchType" class="txt">
+      <td width="100%" align="left">
+        <select name="searchType" id="searchType" class="txt" style="float: left;">
           <option value="b_title" <c:if test="${searchType=='b_title'}">selected</c:if>>제목에서</option>
           <option value="b_contents" <c:if test="${searchType=='b_contents'}">selected</c:if>>본문에서</option>
           <option value="m_nickname" <c:if test="${searchType=='m_nickname'}">selected</c:if>>글쓴이에서</option>
@@ -128,16 +139,11 @@ function SearchText(keyword){
           <input type="search" id="keyword" name="keyword" value="${keyword}">
           <input type="button" id="btnSearch" class="btn btn-outline-secondary btn-sm" value="검색" onclick="SearchText(${keyword})">
       </td>
-	    <c:choose>
-	        <c:when test="${not empty sessionScope.M_id}"> <%-- ${ }를 빼면 적용이 안 됨 --%>
-	          <a onclick="location.href='./HJWriteForm?m_id=${sessionScope.M_id}&m_nickname=${m_nickname}'" class="btn btn-outline-primary" style="float:right;" >&laquo;글쓰기</a>
-	        </c:when>
-        </c:choose>
+         <input type="button" id="goWrite" onclick="writeCheck()" value="글쓰기&raquo;" class="btn btn-outline-primary" style="float: right;" >
     </tr>
   </table>
 </div>
 
-</div>
 <pre>
 
 
