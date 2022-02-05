@@ -6,6 +6,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<style>
+#like_img{width: 45; height: auto;}
+</style>
 </head>
 <body>
 <%@include file="../header1.jsp" %>
@@ -46,9 +49,6 @@
   <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
 </svg> ${boardDetail.b_hit} | 
 
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
-  <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
-</svg> ${boardDetail.b_like_cnt}
 <hr>
 <p>boardDetail.b_filename : ${boardDetail.b_filename}
 <%-- <p>boardDetail.savedName : ${boardDetail.savedName} --%>
@@ -71,49 +71,75 @@
 </form>
 </div>
 
+<!-- 좋아요 -->
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+<%--       <c:choose> --%>
+<%--         <c:when test="${ }"> --%>
+	      <a href='javascript: login_need();' style="text-decoration:none">
+	        <img src='image/like/heart_dislike.png' id="like_img">
+	        <b class="h3"> ${boardDetail.b_like_cnt}</b>
+		  </a> 
+<%-- 	    </c:when> --%>
+<%-- 	  </c:choose>  --%>
+    </div>
+  </div>
+</div>
+
 <div class="container ">
   <c:choose>
     <c:when test="${sessionScope.m_id == boardDetail.m_id}"> <!-- 본인이 쓴 글일 때 -->
-      <a type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#exampleModal">삭제</a>
+      <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#myModal">삭제</button>
 	  <a type="submit" class="btn btn-outline-primary">수정</a>
-  	  <a href="HJboardReply?b_kind=${boardDetail.b_kind}&b_no=${boardDetail.b_no}&m_id=${boardDetail.m_id}" class="btn btn-outline-success">답변</a>
+  	  <a href="HJboardReply_view?b_kind=${boardDetail.b_kind}&b_no=${boardDetail.b_no}&m_id=${boardDetail.m_id}"
+  	   	 class="btn btn-outline-success">답변</a>
     </c:when>
     <c:when test="${sessionScope.m_kind == 2}"> <!-- 관리자일 때 -->
-      <a type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#exampleModal">삭제</a>
+      <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#myModal">삭제</button>
 	  <a type="submit" class="btn btn-outline-primary">수정</a>
-	  <a href="HJboardReply?b_kind=${boardDetail.b_kind}&b_no=${boardDetail.b_no}&m_id=${boardDetail.m_id}" class="btn btn-outline-success">답변</a>
+	  <a href="HJboardReply_view?b_kind=${boardDetail.b_kind}&b_no=${boardDetail.b_no}&m_id=${boardDetail.m_id}"
+	 	 class="btn btn-outline-success">답변</a>
     </c:when>
     <c:when test="${sessionScope.m_id == null}"></c:when>
     <c:when test="${sessionScope.m_id != boardDetail.m_id}"> <!-- 다른 사람 글을 볼 때 -->
-	  <a href="HJboardReply_view?b_kind=${boardDetail.b_kind}&b_no=${boardDetail.b_no}&m_id=${boardDetail.m_id}" class="btn btn-outline-success">답변</a>
+	  <a href="HJboardReply_view?b_kind=${boardDetail.b_kind}&b_no=${boardDetail.b_no}&m_id=${boardDetail.m_id}"
+	  	 class="btn btn-outline-success">답변</a>
     </c:when>
     <c:otherwise></c:otherwise>
   </c:choose>
-	  <a href="/HJBoard?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${sessionScope.m_id}" class="btn btn-outline-secondary">목록</a>
+  	  <a href="/HJBoard?m_id=${sessionScope.m_id}" class="btn btn-outline-secondary">목록</a>
 </div>
 <pre>
 
 </pre>
 <%@include file="../footer.jsp" %>
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+<!-- The Modal -->
+<div class="modal" id="myModal">
   <div class="modal-dialog">
     <div class="modal-content">
+
+      <!-- Modal Header -->
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">게시글 삭제</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <h4 class="modal-title">게시글 삭제</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
+
+      <!-- Modal body -->
       <div class="modal-body">
-       ${boardDetail.b_no}번 글을 삭제하시겠습니까?
+        ${boardDetail.b_Group}번 글을 삭제하시겠습니까?
       </div>
+
+      <!-- Modal footer -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">아니오</button>
-        <button type="button" class="btn btn-outline-primary" onclick="#">예</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">아니오</button>
+        <button type="button" class="btn btn-outline-danger" onclick='location.href="HJBoardDelete?b_kind=${boardDetail.b_kind}&b_no=${boardDetail.b_no}&m_id=${sessionScope.m_id}"'>예</button>
       </div>
+
     </div>
   </div>
 </div>
+
 </body>
 </html>

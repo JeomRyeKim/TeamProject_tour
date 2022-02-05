@@ -34,29 +34,28 @@ public class HJController {
 	}
 	
 	@GetMapping(value = "/HJBoard")
-	public String BoardList(Board board, String boardKindStr, String searchType, String keyword, 
+	public String BoardList(Board board, String searchType, String keyword, 
 							String currentPage, Model model, Member member, String m_id, 
 							HttpServletRequest request) {
 		logger.info("BoardList start");
 		
 		System.out.println("로그인을 한 상태라면 출력값이 있을 것 - m_id->" + m_id);
-	
-		int total = hs.total();
-		int boardKind = 0;
-		if(boardKindStr != null) { 
-			boardKind = Integer.parseInt(boardKindStr);
-		}
+		
+		int total = hs.total(board);
+		int b_kind = board.getB_kind();
+		System.out.println("HJController total b_kind->" + b_kind + 
+				", searchType->" + searchType + ", keyword->" + keyword);
 		
 		System.out.println("HJController BoardList total->" + total);
 		System.out.println("HJController BoardList currentPage->" + currentPage);
-		System.out.println("HJController BoardList boardKindString->" + boardKind);
+		System.out.println("HJController BoardList b_kind->" + b_kind);
 		System.out.println("HJController BoardList keyword->" + keyword);
 		System.out.println("HJController BoardList searchType->" + searchType);
 		
 		Paging pg = new Paging(total, currentPage);
 		board.setStart(pg.getStart());
 		board.setEnd(pg.getEnd());
-		board.setB_kind(boardKind);
+		board.setB_kind(b_kind);
 		board.setKeyword(keyword);
 		board.setSearchType(searchType);
 		List<Board> listBoard = hs.listBoard(board);
@@ -85,6 +84,9 @@ public class HJController {
 	@GetMapping("/HJBoardDetail")
 	public String BoardDetail(Board board, Model model) {
 		logger.info("BoardDetail start");
+		
+		int b_hit = hs.getHit(board);
+		
 		// 파라미터를 Board board로 보내는 이유는 board의 b_kind와 b_no가 복합키라 2개의 파라미터를 값으로 보내야하기 때문
 		Board boardDetail = hs.BoardDetail(board); 
 		System.out.println("HJController BoardDetail boardDetail.getB_title()->" + boardDetail.getB_title());
@@ -192,13 +194,21 @@ public class HJController {
 		return result;
 	}
 	
+	@RequestMapping(value = "/HJBoardDelete")
+	public String BoardDelete(Board board, Model model) {
+		logger.info("BoardDelete start");
+		int boardDelete = hs.BoardDelete(board);
+		System.out.println("HJController BoardDelete boardDelete->" + boardDelete);
+		
+		return "redirect:HJBoard";
+	}	
 	
 	@PostMapping(value = "/HJBoardmodify")
 	public String Boardmodify(Model model) {
 		logger.info("Boardmodify start");
 		
 		
-		return "redirect:HJBoard";
+		return "Boardmodify";
 	}	
 	
 	@RequestMapping("/HJboardReply_view")

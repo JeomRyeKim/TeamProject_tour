@@ -11,15 +11,17 @@
 </style>
 <script>
 $(document).ready(function(){
-	$("#b_lock").change(function(){         
-	        if($("#b_lock").is(":checked")){
-	           $("#b_lock").val("y");
-	           var b_lock = $("#b_lock").val();
-	           alert("b_lock->" + b_lock);
-	        }
-	    });
-
-	});
+	$("#b_lock").change(function(){
+		alert("lock 값을 변경합니다");
+        if($("#b_lock").is(":checked")){
+           $("#b_lock").val("y");
+        }else{
+           $("#b_lock").val("n");
+        }
+        var b_lock = $("#b_lock").val();
+        alert("b_lock->" + b_lock);
+    });
+});
 </script>
 </head>
 <body>
@@ -53,7 +55,7 @@ $(document).ready(function(){
 	      		<option class="dropdown-item" value="4">공지사항</option>
 		      </c:if>
 		    </select>
-		    <input type="checkbox" name="b_lock" value="n"> 비밀글
+		    <label><input type="checkbox" id="b_lock" name="b_lock" value="n"> 비밀글</label>
 	    </td>
 	</tr>
     <tr>

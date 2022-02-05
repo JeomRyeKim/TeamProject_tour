@@ -30,11 +30,36 @@ public class HJDaoImpl implements HJDao {
 	}
 	
 	@Override
-	public int total() {
-		int tot = 0;
+	public int total(Board board) {
 		System.out.println("HJDaoImpl total Start....");
+		int tot = 0;
+		int b_kind = board.getB_kind();
+		String searchType = board.getSearchType();
+		String keyword = board.getKeyword();
+		System.out.println("HJDaoImpl total b_kind->" + b_kind + 
+				", searchType->" + searchType + ", keyword->" + keyword);
 		try {
-			tot = session.selectOne("hjBoardTotal");
+			if(b_kind == 0) { // 전체
+				// 검색X
+				if((searchType==null && keyword==null)||(searchType.length()==0 || keyword.length()==0)) {
+					System.out.println("HJDaoImpl total - 전체, 검색X");
+					tot = session.selectOne("hjBoardTotal_n");
+				}  // 검색O
+				else if((searchType!=null && keyword!=null)||(searchType.length()!=0 || keyword.length()!=0)) {
+					System.out.println("HJDaoImpl total - 전체, 검색O");
+					tot = session.selectOne("hjBoardTotal_y", board);	
+				}
+			}else if(b_kind != 0) { // 유형별
+				// 검색X
+				if((searchType==null && keyword==null)||(searchType.length()==0 || keyword.length()==0)) {
+					System.out.println("HJDaoImpl total - 유형별, 검색X");
+					tot = session.selectOne("hjBoardKindTotal_n", board);	
+				}  // 검색O
+				else if((searchType!=null && keyword!=null)||(searchType.length()!=0 || keyword.length()!=0)) {
+					System.out.println("HJDaoImpl total - 유형별, 검색O");
+					tot = session.selectOne("hjBoardKindTotal_y", board);	
+				}
+			}
 			System.out.println("HJDaoImpl total tot->" + tot);
 		} catch (Exception e) {
 			System.out.println("HJDaoImpl total Exception->" + e.getMessage());
@@ -82,6 +107,20 @@ public class HJDaoImpl implements HJDao {
 	}
 
 	@Override
+	public int getHit(Board board) {
+		System.out.println("HJDaoImpl getHit Start....");
+		int b_hit = 0;
+		try {
+			b_hit = session.update("hjGetHit", board);
+			System.out.println("HJDaoImpl getHit b_hit->" + b_hit);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl getHit Exception->" + e.getMessage());
+		}
+		
+		return b_hit;
+	}
+
+	@Override
 	public Board BoardDetail(Board board) {
 		System.out.println("HJDaoImpl BoardDetail Start....");
 		Board boardDetail = null;
@@ -120,6 +159,18 @@ public class HJDaoImpl implements HJDao {
 		return result;
 	}
 
+	@Override
+	public int BoardDelete(Board board) {
+		System.out.println("HJDaoImpl BoardDelete Start....");
+		int boardDelete = 0;
+		try {
+			boardDelete = session.delete("hjBoardDelete", board);
+			System.out.println("HJDaoImpl BoardDelete boardDelete->" + boardDelete);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl BoardDelete Exception->" + e.getMessage());
+		}
+		return boardDelete;
+	}
 
 
 

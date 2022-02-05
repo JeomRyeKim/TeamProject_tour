@@ -9,9 +9,11 @@ public interface HJDao {
 	
 	Member getMemberDetail(String m_id);
 
-	int total();
+	int total(Board board);
 	
 	List<Board> listBoard(Board board);
+
+	int getHit(Board board);
 
 	Board BoardDetail(Board board);
 
@@ -19,6 +21,7 @@ public interface HJDao {
 
 	int insert(Board board);
 
+	int BoardDelete(Board board);
 	
 
 

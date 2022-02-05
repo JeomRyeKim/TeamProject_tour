@@ -6,6 +6,20 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script>
+$(document).ready(function(){
+	$("#b_lock").change(function(){
+		alert("lock 값을 변경합니다");
+        if($("#b_lock").is(":checked")){
+           $("#b_lock").val("y");
+        }else{
+           $("#b_lock").val("n");
+        }
+        var b_lock = $("#b_lock").val();
+        alert("b_lock->" + b_lock);
+    });
+});
+</script>
 </head>
 <body>
 <%@include file="../header1.jsp" %>
@@ -27,25 +41,25 @@
 		<c:if test="${boardDetail.m_kind == 1}">
 			<td>
 			    [자유]
-			    <input type="checkbox" name="b_lock" value="n"> 비밀글
+			    <label><input type="checkbox" id="b_lock" name="b_lock" value="n"> 비밀글</label>
 		    </td>
 		</c:if>
 		<c:if test="${boardDetail.m_kind == 2}">
 			<td>
 			    [후기]
-			    <input type="checkbox" name="b_lock" value="n"> 비밀글
+			    <label><input type="checkbox" id="b_lock" name="b_lock" value="n"> 비밀글</label>
 		    </td>
 		</c:if>
 		<c:if test="${boardDetail.m_kind == 3}">
 			<td>
 			    [QnA]
-			    <input type="checkbox" name="b_lock" value="n"> 비밀글
+			    <label><input type="checkbox" id="b_lock" name="b_lock" value="n"> 비밀글</label>
 		    </td>
 		</c:if>
 		<c:if test="${boardDetail.m_kind == 4}">
 			<td>
 			    [공지사항]
-			    <input type="checkbox" name="b_lock" value="n"> 비밀글
+			    <label><input type="checkbox" id="b_lock" name="b_lock" value="n"> 비밀글</label>
 		    </td>
 		</c:if>
 	</tr>

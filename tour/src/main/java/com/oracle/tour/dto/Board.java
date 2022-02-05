@@ -17,8 +17,8 @@ public class Board {
 	private int	   b_Group;			// 게시판(댓글) 그룹
 	private int	   b_Step;			// 게시판(댓글) 순서
 	private int	   b_Indent;		// 게시판(댓글) 들여쓰기
-	private String b_notice;		// 게시판 공지글 여부 - 1:일반글, 2:공지글
-	private String b_lock;			// 게시판(댓글) 비밀글 여부 - 1:공개글, 2:비공개글
+	private int	   b_notice;		// 게시판 공지글 여부 - 1:일반글, 2:공지글
+	private String b_lock;			// 게시판(댓글) 비밀글 여부 - n:공개글, y:비공개글
 	private int    b_like_cnt;		// 게시판 좋아요 개수
 	
 	//조회용
@@ -29,5 +29,6 @@ public class Board {
 	private String keyword;			// 검색란에 입력하는 값
 	private int    m_active_kind;	// 활동 여부 - 1:활동중인 회원, 2:임시 회원, 3:탈퇴한 회원
 	private int    m_kind;			// 회원 유형 - 1:사용자, 2:관리자..
+	private String likeCheck;		// 좋아요 여부 - n:싫어요, y:좋아요
 	
 }

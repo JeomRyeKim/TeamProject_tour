@@ -39,10 +39,10 @@
 						<a class="nav-link dropdown-toggle" role="button"
 							data-bs-toggle="dropdown">마이페이지</a>
 							<ul class="dropdown-menu">
-								<li><a class="dropdown-item" href="myInfo">나의 정보</a></li>
+								<li><a class="dropdown-item" href="myInfo?m_id=${sessionScope.m_id}">나의 정보</a></li>
 								<li><a class="dropdown-item" href="myWishList">나의 찜 목록</a></li>
 							</ul></li>
-						<li class="nav-item"><a class="nav-link" href="myPlanner">플래너 작성</a>
+						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/planL?id=${sessionScope.m_id}&active=${sessionScope.m_active_kind}">플래너</a>
 						</li>
 <%-- 						<c:choose> --%>
 <%-- 							<c:when test="${not empty sessionScope.m_id}"> --%>

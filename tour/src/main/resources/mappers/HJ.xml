@@ -6,11 +6,87 @@
 	<select id="hjMemberDetail" parameterType="String" resultType="Member">
 		select * from member where m_id=#{m_id}
 	</select>
-
-	<select id="hjBoardTotal" resultType="int">
+	
+	<!-- 전체, 검색X -->
+	<select id="hjBoardTotal_n" resultType="int">
 		select count(*) from Board
 	</select>
-	<!-- 검색 안 하는 경우 -->	
+	<!-- 전체, 검색O -->
+	<select id="hjBoardTotal_y" resultType="int" parameterType="Board">
+		select count(*) from Board
+        <choose>
+		 	 <when test="searchType == 'b_title'">
+		    		WHERE b_title like '%' || #{keyword} || '%'    
+		   	 </when>
+		 	 <when test="searchType == 'b_contents'">
+		    		WHERE b_contents like '%' || #{keyword} || '%'    
+		   	 </when>
+		 	 <when test="searchType == 'm_nickname'">
+		    		WHERE m_nickname like '%' || #{keyword} || '%'    
+		   	 </when>
+        </choose>
+	</select>
+	<!-- 유형별, 검색X -->
+	<select id="hjBoardKindTotal_n" resultType="int" parameterType="Board">
+		select count(*) from Board
+		<choose>
+		 	 <when test="b_kind == 1">
+		    		WHERE b_kind in (1, 4)   
+		   	 </when>
+		 	 <when test="b_kind == 2">
+		    		WHERE b_kind in (2, 4)   
+		   	 </when>
+		 	 <when test="b_kind == 3">
+		    		WHERE b_kind in (3, 4)   
+		   	 </when>
+		</choose>
+	</select>
+	<!-- 유형별, 검색O -->
+	<select id="hjBoardKindTotal_y" resultType="int" parameterType="Board">
+		select count(*) from Board
+		        <choose>
+		 	 <when test="b_kind == 1 and searchType == 'b_title'">
+		    		WHERE b_kind in (1, 4)
+		    		AND b_title like '%' || #{keyword} || '%'    
+		   	 </when>
+		 	 <when test="b_kind == 1 and searchType == 'b_contents'">
+		    		WHERE b_kind in (1, 4)
+		    		AND b_contents like '%' || #{keyword} || '%'    
+		   	 </when>
+		 	 <when test="b_kind == 1 and searchType == 'm_nickname'">
+		    		WHERE b_kind in (1, 4)
+		    		AND m_nickname like '%' || #{keyword} || '%'    
+		   	 </when>
+		   	 
+		 	 <when test="b_kind == 2 and searchType == 'b_title'">
+		    		WHERE b_kind in (2, 4)
+		    		AND b_title like '%' || #{keyword} || '%'    
+		   	 </when>
+		 	 <when test="b_kind == 2 and searchType == 'b_contents'">
+		    		WHERE b_kind in (2, 4)
+		    		AND b_contents like '%' || #{keyword} || '%'    
+		   	 </when>
+		 	 <when test="b_kind == 2 and searchType == 'm_nickname'">
+		    		WHERE b_kind in (2, 4)
+		    		AND m_nickname like '%' || #{keyword} || '%'    
+		   	 </when>
+		   	 
+		 	 <when test="b_kind == 3 and searchType == 'b_title'">
+		    		WHERE b_kind in (3, 4)
+		    		AND b_title like '%' || #{keyword} || '%'    
+		   	 </when>
+		 	 <when test="b_kind == 3 and searchType == 'b_contents'">
+		    		WHERE b_kind in (3, 4)
+		    		AND b_contents like '%' || #{keyword} || '%'    
+		   	 </when>
+		 	 <when test="b_kind == 3 and searchType == 'm_nickname'">
+		    		WHERE b_kind in (3, 4)
+		    		AND m_nickname like '%' || #{keyword} || '%'    
+		   	 </when>
+        </choose>
+	</select>
+	
+	<!-- 전체 검색 안 하는 경우 -->	
 	<select id="hjBoardList1_old" parameterType="Board" resultType="Board">
 	  select *
 		from (
@@ -18,24 +94,11 @@
 		  	  from (select b.* , m.m_nickname, m.m_active_kind
                     from   board b, member m 
                     where b.m_id = m.m_id
-                    order by b_date desc, b_no) a
+                    order by b_notice desc, b_date desc, b_no) a
 		     )
 		where rn between #{start} and #{end}
 	</select>
-	<select id="hjBoardList2_old" parameterType="Board" resultType="Board">
-	    select *
-		from (
-		   	  select rownum rn, a.*
-		  	  from (select b.* , m.m_nickname, m.m_active_kind
-                    from   board b, member m 
-                    where b.m_id = m.m_id
-                    and b_kind = #{b_kind}   
-                    order by b_date desc, b_no) a
-		     )
-		where rn between #{start} and #{end}
-	</select>
-	
-	<!-- 검색하는 경우 -->
+	<!-- 전체 검색하는 경우 -->
 	<select id="hjBoardList1" parameterType="Board" resultType="Board">
 		  select *
 			from (
@@ -54,10 +117,25 @@
 						   	  	    AND m_nickname like '%' || #{keyword} || '%'   
 							 </otherwise>
 					    </choose>
-	                    order by b_date desc, b_no) a
+	                    order by b_notice desc, b_date desc, b_no) a
 			     )
 			where rn between #{start} and #{end}
 	</select>
+	
+	<!-- 유형별 검색 안 하는 경우 -->	
+	<select id="hjBoardList2_old" parameterType="Board" resultType="Board">
+	    select *
+		from (
+		   	  select rownum rn, a.*
+		  	  from (select b.* , m.m_nickname, m.m_active_kind
+                    from   board b, member m 
+                    where b.m_id = m.m_id
+                    and b_kind in (#{b_kind}, 4)   
+                    order by b_notice desc, b_date desc, b_no) a
+		     )
+		where rn between #{start} and #{end}
+	</select>
+	<!-- 유형별 검색하는 경우 -->
 	<select id="hjBoardList2" parameterType="Board" resultType="Board">
 	    select *
 		from (
@@ -67,49 +145,52 @@
                     where b.m_id = m.m_id
                    	<choose>
 					 	 <when test="b_kind == 1 and searchType == 'b_title'">
-					    		AND b_kind = 1
+					    		AND b_kind in (1, 4)
 					    		AND b_title like '%' || #{keyword} || '%'    
 					   	 </when>
 					 	 <when test="b_kind == 1 and searchType == 'b_contents'">
-					    		AND b_kind = 1
+					    		AND b_kind in (1, 4)
 					    		AND b_contents like '%' || #{keyword} || '%'    
 					   	 </when>
 					 	 <when test="b_kind == 1 and searchType == 'm_nickname'">
-					    		AND b_kind = 1
+					    		AND b_kind in (1, 4)
 					    		AND m_nickname like '%' || #{keyword} || '%'    
 					   	 </when>
 					   	 
 					 	 <when test="b_kind == 2 and searchType == 'b_title'">
-					    		AND b_kind = 2
+					    		AND b_kind in (2, 4)
 					    		AND b_title like '%' || #{keyword} || '%'    
 					   	 </when>
 					 	 <when test="b_kind == 2 and searchType == 'b_contents'">
-					    		AND b_kind = 2
+					    		AND b_kind in (2, 4)
 					    		AND b_contents like '%' || #{keyword} || '%'    
 					   	 </when>
 					 	 <when test="b_kind == 2 and searchType == 'm_nickname'">
-					    		AND b_kind = 2
+					    		AND b_kind in (2, 4)
 					    		AND m_nickname like '%' || #{keyword} || '%'    
 					   	 </when>
 					   	 
 					 	 <when test="b_kind == 3 and searchType == 'b_title'">
-					    		AND b_kind = 3
+					    		AND b_kind in (3, 4)
 					    		AND b_title like '%' || #{keyword} || '%'    
 					   	 </when>
 					 	 <when test="b_kind == 3 and searchType == 'b_contents'">
-					    		AND b_kind = 3
+					    		AND b_kind in (3, 4)
 					    		AND b_contents like '%' || #{keyword} || '%'    
 					   	 </when>
 					 	 <otherwise>
-					    		AND b_kind = 3
+					    		AND b_kind in (3, 4)
 					    		AND m_nickname like '%' || #{keyword} || '%'    
 					   	 </otherwise>
 					</choose>
-                    order by b_date desc, b_no) a
+                    order by b_notice desc, b_date desc, b_no) a
 		     )
 		where rn between #{start} and #{end}
 	</select>
 
+	<update id="hjGetHit" parameterType="Board">
+		update board set b_hit = b_hit+1 where b_kind = #{b_kind} and b_no = #{b_no}
+	</update>
 	
 	<select id="hjBoardDetail" parameterType="Board" resultType="Board">
 		select b.*, m.m_nickname, m.m_active_kind, m_kind
@@ -133,5 +214,9 @@
 		insert into board values(#{b_kind}, b_no_seq, #{m_id}, #{b_title}, #{b_contents}, sysdate, 0,
 								 #{b_filename}, b_group_seq, 0, 0, #{b_notice}, #{b_lock}, null)
 	</insert>
+	
+	<delete id="hjBoardDelete" parameterType="Board">
+		delete from board where b_kind = #{b_kind} and b_no = #{b_no}
+	</delete>
 	
 </mapper>

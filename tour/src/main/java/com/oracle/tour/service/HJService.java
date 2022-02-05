@@ -9,15 +9,20 @@ public interface HJService {
 	
 	Member getMemberDetail(String m_id);
 
-	int total();
+	int total(Board board);
 	
 	List<Board> listBoard(Board board);
 
-	Board BoardDetail(Board board);
+	int getHit(Board board);
 
+	Board BoardDetail(Board board);
+	
 	String getNickname(String m_id);
 
 	int insert(Board board);
+
+	int BoardDelete(Board board);
+
 
 	
 

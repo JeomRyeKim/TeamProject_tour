@@ -29,9 +29,9 @@ public class HJServiceImpl implements HJService {
 	}
 	
 	@Override
-	public int total() {
+	public int total(Board board) {
 		System.out.println("HJServiceImpl total start..");
-		int totCnt = hd.total();
+		int totCnt = hd.total(board);
 		System.out.println("HJServiceImpl total totCnt->" + totCnt);
 		return totCnt;
 	}
@@ -44,6 +44,15 @@ public class HJServiceImpl implements HJService {
 		
 		return listBoard;
 	}
+
+	@Override
+	public int getHit(Board board) {
+		System.out.println("HJServiceImpl getHit start..");
+		int b_hit = hd.getHit(board);
+		
+		return b_hit;
+	}
+
 
 	@Override
 	public Board BoardDetail(Board board) {
@@ -69,6 +78,13 @@ public class HJServiceImpl implements HJService {
 		return result;
 	}
 
+	@Override
+	public int BoardDelete(Board board) {
+		System.out.println("HJServiceImpl BoardDelete start..");
+		int boardDelete = hd.BoardDelete(board);
+		
+		return boardDelete;
+	}
 
 
 

@@ -15,16 +15,18 @@ function SearchText(keyword){
 	//alert("searchType->" + searchType);
 	var keyword = $('#keyword').val();
 	//alert("keyword->" + keyword);
-	var b_kind = $('#b_kind').val();
+	//var b_kind = $('#b_kind').val();
+	var url = window.location.search.split("=");
+	var b_kind = url[1];
 	//alert("b_kind->" + b_kind);
 
-	if(!window.location.search.includes('boardKindStr')){ // 전체 검색시
-		//alert("!window.location.search.includes('boardKindStr')->전체 검색시");
-		location.href = "/HJBoard?searchType=" + searchType + "&keyword="+keyword;
-	}else if(window.location.search.includes('boardKindStr')) { // 유형별 검색시
-		//alert("window.location.search.includes('boardKindStr')->유형별 검색시");
-		location.href = "/HJBoard?boardKindStr=" + b_kind + "&searchType=" + searchType + "&keyword="+keyword;
-		$('#b_kind').val("");
+	if(!window.location.search.includes('b_kind')){ // 전체 검색시
+		//alert("!window.location.search.includes('b_kind')->전체 검색시");
+		location.href = "/HJBoard?searchType=" + searchType + "&keyword=" + keyword;
+	}else if(window.location.search.includes('b_kind')) { // 유형별 검색시
+		//alert("window.location.search.includes('b_kind')->유형별 검색시");
+		location.href = "/HJBoard?b_kind=" + b_kind + "&searchType=" + searchType + "&keyword=" + keyword;
+		//$('#b_kind').val("");
 	}
 	
 }
@@ -57,9 +59,9 @@ function writeCheck(){
 
 </pre>
 	<label><a class="btn btn-outline-secondary" name="radBut" value="a"  id="all"    onclick="location.href = '/HJBoard'">전체</a></label>
-	<label><a class="btn btn-outline-secondary" name="radBut" value="1"  id="free"   onclick="location.href = '/HJBoard?boardKindStr=1'">자유</a></label>
-	<label><a class="btn btn-outline-secondary" name="radBut" value="2"  id="review" onclick="location.href = '/HJBoard?boardKindStr=2'">후기</a></label>
-	<label><a class="btn btn-outline-secondary" name="radBut" value="3"  id="qna"    onclick="location.href = '/HJBoard?boardKindStr=3'">QnA</a></label>
+	<label><a class="btn btn-outline-secondary" name="radBut" value="1"  id="free"   onclick="location.href = '/HJBoard?b_kind=1'">자유</a></label>
+	<label><a class="btn btn-outline-secondary" name="radBut" value="2"  id="review" onclick="location.href = '/HJBoard?b_kind=2'">후기</a></label>
+	<label><a class="btn btn-outline-secondary" name="radBut" value="3"  id="qna"    onclick="location.href = '/HJBoard?b_kind=3'">QnA</a></label>
 	
 	<a class="btn btn-outline-secondary btn-sm" style="float:right;" readonly>전체글 : ${total}</a>
 	<c:set var="num" value="${pg.total-pg.start+1}"></c:set>
@@ -68,6 +70,10 @@ function writeCheck(){
 	<br>m_nickname : ${member.m_nickname}
 	<br>m_kind : ${member.m_kind}
 	<br>m_active_kind : ${member.m_active_kind}
+	<br>pageContext.request.requestURL : ${pageContext.request.requestURL}
+	<br>param.b_kind : ${param.b_kind}
+	<br>param.searchType : ${param.searchType}
+	<br>param.keyword : ${param.keyword}
 <table class="table table-hover">
     <thead>
       <tr>
@@ -99,15 +105,15 @@ function writeCheck(){
 	        	<td>[QnA]</td>
 	          </c:if>
 	      	  <c:if test="${board.b_kind eq 4}">
-	        	<td>[공지사항]</td>
+	        	<td><b style="color: red;">[공지사항]</b></td>
 	          </c:if>
-	        <td>${board.b_no}</td>
+	        <td>${board.b_Group}</td>
         	<td><a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}">${board.b_title}</td>
 	        <td>${board.m_nickname}</td>
 	        <td>${board.b_date}</td>
 	        <td>
-	        	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
-				  <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+	        	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+				  <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
 				</svg> ${board.b_like_cnt}
 	        </td>
 	        <td>${board.b_hit}</td>
@@ -116,17 +122,61 @@ function writeCheck(){
     </tbody>
 	<c:set var="num" value="${num - 1}"></c:set>
 </table>
+<!-- 페이징 처리 -->
 <div align="center">
+<c:set var="kind" value="${param.b_kind}"/>
+<c:set var="search" value="${param.searchType}"/>
+<c:set var="word" value="${param.keyword}"/>
+  <!-- 전체, 검색X -->
+  <c:if test = "${kind == null and search == null}">
 	<c:if test="${pg.startPage > pg.pageBlock}">
-		<a href="HJBoard?currentPage=${pg.startPage-pg.pageBlock}&m_id=${member.m_id}">[이전]</a>
+		<a href="<c:url value="HJBoard?currentPage=${pg.startPage-pg.pageBlock}&m_id=${member.m_id}"/>">[이전]</a>
 	</c:if>
 	<c:forEach var="i" begin="${pg.startPage}" end="${pg.endPage}">
-		<a href="HJBoard?currentPage=${i}&m_id=${member.m_id}">[${i}]</a>
+		<a href="<c:url value="HJBoard?currentPage=${i}&m_id=${member.m_id}"/>">[${i}]</a>
 	</c:forEach>
 	<c:if test="${pg.endPage < pg.totalPage}">
-		<a href="HJBoard?currentPage=${pg.startPage+pg.pageBlock}&m_id=${member.m_id}">[다음]</a>
+		<a href="<c:url value="HJBoard?currentPage=${pg.startPage+pg.pageBlock}"/>">[다음]</a>
 	</c:if>
-</div>
+   </c:if>
+  <!-- 전체, 검색O -->
+  <c:if test="${kind == null and search != null}">
+    <c:if test="${pg.startPage > pg.pageBlock}">
+		<a href="<c:url value="HJBoard?currentPage=${pg.startPage-pg.pageBlock}&m_id=${member.m_id}&searchType=${board.searchType}&keyword=${board.keyword}"/>">[이전]</a>
+	</c:if>
+	<c:forEach var="i" begin="${pg.startPage}" end="${pg.endPage}">
+		<a href="<c:url value="HJBoard?currentPage=${i}&m_id=${member.m_id}&searchType=${board.searchType}&keyword=${board.keyword}"/>">[${i}]</a>
+	</c:forEach>
+	<c:if test="${pg.endPage < pg.totalPage}">
+		<a href="<c:url value="HJBoard?currentPage=${pg.startPage+pg.pageBlock}&m_id=${member.m_id}&searchType=${board.searchType}&keyword=${board.keyword}"/>">[다음]</a>
+	</c:if>
+  </c:if>
+  
+  <!-- 유형별, 검색X -->
+  <c:if test = "${kind != null and search == null}">
+	<c:if test="${pg.startPage > pg.pageBlock}">
+		<a href="HJBoard?currentPage=${pg.startPage-pg.pageBlock}&m_id=${member.m_id}&b_kind=${board.b_kind}">[이전]</a>
+	</c:if>
+	<c:forEach var="i" begin="${pg.startPage}" end="${pg.endPage}">
+		<a href="HJBoard?currentPage=${i}&m_id=${member.m_id}&b_kind=${board.b_kind}">[${i}]</a>
+	</c:forEach>
+	<c:if test="${pg.endPage < pg.totalPage}">
+		<a href="HJBoard?currentPage=${pg.startPage+pg.pageBlock}&m_id=${member.m_id}&b_kind=${board.b_kind}">[다음]</a>
+	</c:if>
+  </c:if>
+  <!-- 유형별, 검색O -->
+  <c:if test = "${kind != null and search != null}">
+	<c:if test="${pg.startPage > pg.pageBlock}">
+		<a href="HJBoard?currentPage=${pg.startPage-pg.pageBlock}&m_id=${member.m_id}&b_kind=${board.b_kind}&searchType=${board.searchType}&keyword=${board.keyword}">[이전]</a>
+	</c:if>
+	<c:forEach var="i" begin="${pg.startPage}" end="${pg.endPage}">
+		<a href="HJBoard?currentPage=${i}&m_id=${member.m_id}&b_kind=${board.b_kind}&searchType=${board.searchType}&keyword=${board.keyword}">[${i}]</a>
+	</c:forEach>
+	<c:if test="${pg.endPage < pg.totalPage}">
+		<a href="HJBoard?currentPage=${pg.startPage+pg.pageBlock}&m_id=${member.m_id}&b_kind=${board.b_kind}&searchType=${board.searchType}&keyword=${board.keyword}">[다음]</a>
+	</c:if>
+  </c:if>
+</div> <!-- 페이징 처리 끝 -->
 
   <table>
     <tr>
