@@ -3,6 +3,7 @@ package com.oracle.tour.service;
 import java.util.List;
 
 import com.oracle.tour.dto.Board;
+import com.oracle.tour.dto.Board_like;
 import com.oracle.tour.dto.Member;
 
 public interface HJService {
@@ -22,6 +23,14 @@ public interface HJService {
 	int insert(Board board);
 
 	int BoardDelete(Board board);
+
+	int BLikeChk(Board_like board_like);
+
+	int dislike_bl(Board_like board_like);
+
+	int dislike_b(Board board);
+
+	int selectLikeCnt(Board board);
 
 
 	

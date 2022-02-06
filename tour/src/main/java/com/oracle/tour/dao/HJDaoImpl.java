@@ -2,11 +2,13 @@ package com.oracle.tour.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.oracle.tour.dto.Board;
+import com.oracle.tour.dto.Board_like;
 import com.oracle.tour.dto.Member;
 
 @Repository
@@ -170,6 +172,62 @@ public class HJDaoImpl implements HJDao {
 			System.out.println("HJDaoImpl BoardDelete Exception->" + e.getMessage());
 		}
 		return boardDelete;
+	}
+
+	@Override
+	public int BLikeChk(Board_like board_like) {
+		System.out.println("HJDaoImpl BLikeChk Start....");
+		int BLikeChk = 0;
+		try {
+			BLikeChk = session.selectOne("hjBLikeChk", board_like);
+			System.out.println("HJDaoImpl board.getM_id()->" + board_like.getM_id());
+			System.out.println("HJDaoImpl BLikeChk->" + BLikeChk);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl BLikeChk Exception->" + e.getMessage());
+		}
+		return BLikeChk;
+	}
+	// b_like_check 'y' -> 'n'으로 변경
+	@Override
+	public int dislike_bl(Board_like board_like) {
+		System.out.println("HJDaoImpl dislike_bl Start....");
+		int dislike_bl = 0;
+		try {
+			dislike_bl = session.update("hjDislike_bl", board_like);
+			System.out.println("HJDaoImpl dislike_bl->" + dislike_bl);
+			System.out.println("HJDaoImpl dislike_bl board_like.getB_like_check()->" + board_like.getB_like_check());
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl dislike_bl Exception->" + e.getMessage());
+		}
+		return dislike_bl;
+	}
+	// b_like_cnt -1처리
+	@Override
+	public int dislike_b(Board board) {
+		System.out.println("HJDaoImpl dislike_b Start....");
+		int dislike_b = 0;
+		try {
+			dislike_b = session.update("hjDislike_b", board);
+			System.out.println("HJDaoImpl dislike_b->" + dislike_b);
+			System.out.println("HJDaoImpl dislike_b board.getB_like_cnt()->" + board.getB_like_cnt());
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl dislike_b Exception->" + e.getMessage());
+		}
+		return dislike_b;
+	}
+
+	@Override
+	public int selectLikeCnt(Board board) {
+		System.out.println("HJDaoImpl selectLikeCnt Start....");
+		int b_like_cnt = 0;
+		try {
+			b_like_cnt = session.selectOne("hjselectLikeCnt", board);
+			System.out.println("HJDaoImpl selectLikeCnt b_like_cnt->" + b_like_cnt);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl selectLikeCnt Exception->" + e.getMessage());
+		}
+		
+		return b_like_cnt;
 	}
 
 

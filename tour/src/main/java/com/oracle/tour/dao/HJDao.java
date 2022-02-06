@@ -3,6 +3,7 @@ package com.oracle.tour.dao;
 import java.util.List;
 
 import com.oracle.tour.dto.Board;
+import com.oracle.tour.dto.Board_like;
 import com.oracle.tour.dto.Member;
 
 public interface HJDao {
@@ -22,7 +23,14 @@ public interface HJDao {
 	int insert(Board board);
 
 	int BoardDelete(Board board);
-	
+
+	int BLikeChk(Board_like board_like);
+
+	int dislike_bl(Board_like board_like);
+
+	int dislike_b(Board board);
+
+	int selectLikeCnt(Board board);
 
 
 }

@@ -219,4 +219,36 @@
 		delete from board where b_kind = #{b_kind} and b_no = #{b_no}
 	</delete>
 	
+	<select id="hjBLikeChk" parameterType="Board_like" resultType="int">
+		select count(*) 
+		from board_like 
+		where b_kind = #{b_kind}
+		and b_no = #{b_no}
+		and m_id = #{m_id}
+		and b_like_check = 'y'
+	</select>
+	
+	<!-- b_like_check 'y' -> 'n'으로 변경 -->
+	<update id="hjDislike_bl" parameterType="Board_like">
+		update board_like
+		set b_like_check = 'n'
+		where b_kind = #{b_kind}
+		and b_no = #{b_no}
+		and m_id = #{m_id}
+	</update>
+	<!-- b_like_cnt -1처리 -->
+	<update id="hjDislike_b" parameterType="Board">
+		update board
+		set b_like_cnt = b_like_cnt -1
+		where b_kind = #{b_kind}
+		and b_no = #{b_no}
+	</update>
+	
+	<select id="hjselectLikeCnt" parameterType="Board" resultType="int">
+		select b_like_cnt
+		from board
+		where b_kind = #{b_kind}
+		and b_no = #{b_no}
+	</select>
+	
 </mapper>

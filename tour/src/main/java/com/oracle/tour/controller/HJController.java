@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.oracle.tour.dto.Board;
+import com.oracle.tour.dto.Board_like;
 import com.oracle.tour.dto.Member;
 import com.oracle.tour.service.HJService;
 import com.oracle.tour.service.Paging;
@@ -82,17 +86,69 @@ public class HJController {
 	}
 	
 	@GetMapping("/HJBoardDetail")
-	public String BoardDetail(Board board, Model model) {
+	public String BoardDetail(Board board, Board_like board_like, Model model) {
 		logger.info("BoardDetail start");
-		
+		// 조회수 올리는 메소드
 		int b_hit = hs.getHit(board);
 		
 		// 파라미터를 Board board로 보내는 이유는 board의 b_kind와 b_no가 복합키라 2개의 파라미터를 값으로 보내야하기 때문
 		Board boardDetail = hs.BoardDetail(board); 
 		System.out.println("HJController BoardDetail boardDetail.getB_title()->" + boardDetail.getB_title());
 		model.addAttribute("boardDetail", boardDetail);
+		
+		// 좋아요
+		String m_id = board.getM_id();
+		System.out.println("로그인 했다면 HJController BoardDetail m_id->" + m_id);
+		// 좋아요 했는지 여부 확인 - 좋아요 했으면 1, 없으면 0
+		int BLikeChk = hs.BLikeChk(board_like);
+		System.out.println("HJController BoardDetail BLikeChk->" + BLikeChk);
+		model.addAttribute("BLikeChk", BLikeChk);
 
 		return "HJview/BoardDetail";
+	}
+	
+	@RequestMapping("/HJBoardDislike")
+	@ResponseBody
+	public String BoardDislike(Board_like board_like, Board board) {
+		System.out.println("HJController BoardDislike start");
+		System.out.println("HJController BoardDislike board_like.getB_kind()" + board_like.getB_kind());
+		System.out.println("HJController BoardDislike board_like.getB_no()" + board_like.getB_no());
+		System.out.println("HJController BoardDislike board_like.getM_id()" + board_like.getM_id());
+		System.out.println("HJController BoardDislike board.getB_kind()" + board.getB_kind());
+		System.out.println("HJController BoardDislike board.getB_no()" + board.getB_no());
+		System.out.println("HJController BoardDislike board.getM_id()" + board.getM_id());
+		
+		// b_like_check 'y' -> 'n'으로 변경
+		int dislike_bl = hs.dislike_bl(board_like);
+		System.out.println("HJController BoardDislike dislike_bl->" + dislike_bl);
+		System.out.println("HJController dislike_bl board_like.getB_like_check()->" + board_like.getB_like_check());
+		// b_like_cnt -1처리
+		int dislike_b = hs.dislike_b(board);
+		System.out.println("HJController BoardDislike dislike_b->" + dislike_b);
+		System.out.println("HJController dislike_b board.getB_like_cnt()->" + board.getB_like_cnt());
+		
+		// 좋아요 했는지 여부 가져오기 - 좋아요 했으면 1, 없으면 0
+		int BLikeChk = hs.BLikeChk(board_like);
+		System.out.println("HJController BoardDislike BLikeChk->" + BLikeChk);
+		// b_like_cnt 가져오기
+		int b_like_cnt = hs.selectLikeCnt(board);
+		System.out.println("HJController BoardDislike b_like_cnt->" + b_like_cnt);
+		
+		JSONObject obj = new JSONObject();
+		obj.put("dislike_bl", dislike_bl);
+		obj.put("dislike_b", dislike_b);
+		obj.put("BLikeChk", BLikeChk);
+		obj.put("b_like_cnt", b_like_cnt);
+
+		return obj.toJSONString();
+	}
+	
+	@RequestMapping("/HJBoardLike")
+	@ResponseBody
+	public String BoardLike(Board_like board_like) {
+		System.out.println("HJController BoardLike start");
+		
+		return null;
 	}
 	
 	@RequestMapping(value = "/HJWriteForm")

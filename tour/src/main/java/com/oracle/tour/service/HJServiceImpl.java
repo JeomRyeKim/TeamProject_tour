@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.oracle.tour.dao.HJDao;
 import com.oracle.tour.dto.Board;
+import com.oracle.tour.dto.Board_like;
 import com.oracle.tour.dto.Member;
 
 @Service
@@ -84,6 +85,37 @@ public class HJServiceImpl implements HJService {
 		int boardDelete = hd.BoardDelete(board);
 		
 		return boardDelete;
+	}
+
+	@Override
+	public int BLikeChk(Board_like board_like) {
+		System.out.println("HJServiceImpl BLikeChk start..");
+		int BLikeChk = hd.BLikeChk(board_like);
+		
+		return BLikeChk;
+	}
+
+	@Override
+	public int dislike_bl(Board_like board_like) {
+		System.out.println("HJServiceImpl dislike_bl start..");
+		int dislike_bl = hd.dislike_bl(board_like);
+		
+		return dislike_bl;
+	}
+
+	@Override
+	public int dislike_b(Board board) {
+		System.out.println("HJServiceImpl dislike_b start..");
+		int dislike_b = hd.dislike_b(board);
+		
+		return dislike_b;
+	}
+
+	@Override
+	public int selectLikeCnt(Board board) {
+		System.out.println("HJServiceImpl selectLikeCnt start..");
+		int b_like_cnt = hd.selectLikeCnt(board);
+		return b_like_cnt;
 	}
 
 

@@ -2,9 +2,9 @@
     pageEncoding="UTF-8"%>
 <%@include file="boot.jsp" %> 
 <!DOCTYPE html>
-<%
-	String context = request.getContextPath();
-%>
+<%-- <% --%>
+<!--  	String context = request.getContextPath(); -->
+<%-- %> --%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -58,10 +58,10 @@ function writeCheck(){
 <pre>
 
 </pre>
-	<label><a class="btn btn-outline-secondary" name="radBut" value="a"  id="all"    onclick="location.href = '/HJBoard'">전체</a></label>
-	<label><a class="btn btn-outline-secondary" name="radBut" value="1"  id="free"   onclick="location.href = '/HJBoard?b_kind=1'">자유</a></label>
-	<label><a class="btn btn-outline-secondary" name="radBut" value="2"  id="review" onclick="location.href = '/HJBoard?b_kind=2'">후기</a></label>
-	<label><a class="btn btn-outline-secondary" name="radBut" value="3"  id="qna"    onclick="location.href = '/HJBoard?b_kind=3'">QnA</a></label>
+	<label><a class="btn btn-outline-secondary" value="a"  id="all"    onclick="location.href = '/HJBoard'">전체</a></label>
+	<label><a class="btn btn-outline-secondary" value="1"  id="free"   onclick="location.href = '/HJBoard?b_kind=1'">자유</a></label>
+	<label><a class="btn btn-outline-secondary" value="2"  id="review" onclick="location.href = '/HJBoard?b_kind=2'">후기</a></label>
+	<label><a class="btn btn-outline-secondary" value="3"  id="qna"    onclick="location.href = '/HJBoard?b_kind=3'">QnA</a></label>
 	
 	<a class="btn btn-outline-secondary btn-sm" style="float:right;" readonly>전체글 : ${total}</a>
 	<c:set var="num" value="${pg.total-pg.start+1}"></c:set>
