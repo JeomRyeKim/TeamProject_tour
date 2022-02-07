@@ -219,6 +219,7 @@
 		delete from board where b_kind = #{b_kind} and b_no = #{b_no}
 	</delete>
 	
+	<!-- 좋아요 했는지 y여부 가져오기 - 좋아요 했으면 1, 아니면 0 -->
 	<select id="hjBLikeChk" parameterType="Board_like" resultType="int">
 		select count(*) 
 		from board_like 
@@ -226,6 +227,15 @@
 		and b_no = #{b_no}
 		and m_id = #{m_id}
 		and b_like_check = 'y'
+	</select>
+	<!-- 좋아요 했는지 n여부 가져오기 - 좋아요 했으면 0, 아니면 1 -->
+	<select id="hjBLikeChk_n" parameterType="Board_like" resultType="int">
+		select count(*) 
+		from board_like 
+		where b_kind = #{b_kind}
+		and b_no = #{b_no}
+		and m_id = #{m_id}
+		and b_like_check = 'n'
 	</select>
 	
 	<!-- b_like_check 'y' -> 'n'으로 변경 -->
@@ -243,7 +253,7 @@
 		where b_kind = #{b_kind}
 		and b_no = #{b_no}
 	</update>
-	
+	<!-- b_like_cnt 가져오기 -->
 	<select id="hjselectLikeCnt" parameterType="Board" resultType="int">
 		select b_like_cnt
 		from board
@@ -251,4 +261,40 @@
 		and b_no = #{b_no}
 	</select>
 	
+	<!-- 좋아요 한 적이 있는지 여부 가져오기 -->
+	<select id="hjselBLikeChk" parameterType="Board_like" resultType="int">
+		select count(*) 
+		from board_like 
+		where b_kind = #{b_kind}
+		and b_no = #{b_no}
+		and m_id = #{m_id}
+		and b_like_check = 'n'
+	</select>
+	<!-- b_like_check = "y" 수정처리 -->
+	<update id="hjUpdate_bl"  parameterType="Board_like">
+		update board_like
+		set b_like_check = 'y'
+		where b_kind = #{b_kind}
+		and b_no = #{b_no}
+		and m_id = #{m_id}
+	</update>
+	<!-- 좋아요를 처음 누를 때 'n'으로 일단 insert -->
+	<insert id="hjinsert_bl" parameterType="Board_like">
+		insert into board_like values(#{b_kind}, #{b_no}, #{m_id}, 'y')
+	</insert>
+	<!-- b_like_cnt +1처리 -->
+	<update id="hjLike_b">
+		update board
+		set b_like_cnt = b_like_cnt +1
+		where b_kind = #{b_kind}
+		and b_no = #{b_no}
+	</update>
+	<!-- b_like_check - y or n 여부 -->
+	<select id="hjBLikeYN" parameterType="Board_like" resultType="java.lang.String">
+		select b_like_check 
+		from board_like 
+		where b_kind = #{b_kind}
+		and b_no = #{b_no}
+		and m_id = #{m_id}
+	</select>
 </mapper>

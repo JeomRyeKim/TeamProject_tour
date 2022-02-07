@@ -99,57 +99,98 @@ public class HJController {
 		// 좋아요
 		String m_id = board.getM_id();
 		System.out.println("로그인 했다면 HJController BoardDetail m_id->" + m_id);
-		// 좋아요 했는지 여부 확인 - 좋아요 했으면 1, 없으면 0
-		int BLikeChk = hs.BLikeChk(board_like);
-		System.out.println("HJController BoardDetail BLikeChk->" + BLikeChk);
-		model.addAttribute("BLikeChk", BLikeChk);
-
+		
+		// 좋아요 y or n여부?
+		// 로그인 했을 때
+		if(m_id != null) {
+			String b_like_check = hs.BLikeYN(board_like);
+			System.out.println("HJController BoardDetail b_like_check->" + b_like_check);
+			model.addAttribute("b_like_check", b_like_check);
+		}else { // 로그인 안 했을 때
+			model.addAttribute("b_like_check", "n");
+		}
 		return "HJview/BoardDetail";
 	}
 	
-	@RequestMapping("/HJBoardDislike")
+	//좋아요 실행
+	@RequestMapping("/HJBoardLike")
 	@ResponseBody
-	public String BoardDislike(Board_like board_like, Board board) {
-		System.out.println("HJController BoardDislike start");
-		System.out.println("HJController BoardDislike board_like.getB_kind()" + board_like.getB_kind());
-		System.out.println("HJController BoardDislike board_like.getB_no()" + board_like.getB_no());
-		System.out.println("HJController BoardDislike board_like.getM_id()" + board_like.getM_id());
-		System.out.println("HJController BoardDislike board.getB_kind()" + board.getB_kind());
-		System.out.println("HJController BoardDislike board.getB_no()" + board.getB_no());
-		System.out.println("HJController BoardDislike board.getM_id()" + board.getM_id());
+	public String BoardLike(Board_like board_like, Board board) {
+		System.out.println("HJController BoardLike start");
+		System.out.println("HJController BoardLike board_like.getB_kind()" + board_like.getB_kind());
+		System.out.println("HJController BoardLike board_like.getB_no()" + board_like.getB_no());
+		System.out.println("HJController BoardLike board_like.getM_id()" + board_like.getM_id());
+		System.out.println("HJController BoardLike board.getB_kind()" + board.getB_kind());
+		System.out.println("HJController BoardLike board.getB_no()" + board.getB_no());
+		System.out.println("HJController BoardLike board.getM_id()" + board.getM_id());
 		
-		// b_like_check 'y' -> 'n'으로 변경
-		int dislike_bl = hs.dislike_bl(board_like);
-		System.out.println("HJController BoardDislike dislike_bl->" + dislike_bl);
-		System.out.println("HJController dislike_bl board_like.getB_like_check()->" + board_like.getB_like_check());
-		// b_like_cnt -1처리
-		int dislike_b = hs.dislike_b(board);
-		System.out.println("HJController BoardDislike dislike_b->" + dislike_b);
-		System.out.println("HJController dislike_b board.getB_like_cnt()->" + board.getB_like_cnt());
-		
-		// 좋아요 했는지 여부 가져오기 - 좋아요 했으면 1, 없으면 0
+		// 좋아요 했는지 y여부 가져오기 - 좋아요 했으면 1, 없으면 0
 		int BLikeChk = hs.BLikeChk(board_like);
-		System.out.println("HJController BoardDislike BLikeChk->" + BLikeChk);
+		System.out.println("HJController BoardLike BLikeChk->" + BLikeChk);
+		int BLikeChk_n = 0;
+		int insert_bl = 0;
+		int like_b = 0;
+		int update_bl = 0;
+		int dislike_bl = 0;
+		int dislike_b = 0;
+		
+		// 좋아요 y가 아니다 - 1. n이다  2. 좋아요 처음이다 <- 좋아요+1해야함
+		if(BLikeChk == 0 ) {
+			// 좋아요 했는지 n여부 가져오기 - 0:좋아요 처음, 1:n이다
+			BLikeChk_n = hs.BLikeChk_n(board_like);
+			System.out.println("HJController BoardLike BLikeChk_n->" + BLikeChk_n);
+			// 좋아요 처음이다 
+			if(BLikeChk_n == 0) { 
+				// 좋아요를 처음 누를 때 b_like_check = "y"으로 insert
+				insert_bl = hs.insert_bl(board_like);
+				System.out.println("HJController BoardLike insert_bl->" + insert_bl);
+				// b_like_cnt +1처리
+				like_b = hs.like_b(board);
+				System.out.println("HJController BoardLike like_b->" + like_b);
+				System.out.println("HJController like_b board.getB_like_cnt()->" + board.getB_like_cnt());
+			}else { // n이다
+				// 기존에 'n'으로 되어있던 값을 b_like_check = "y" 수정처리
+				update_bl = hs.update_bl(board_like);
+				System.out.println("HJController BoardLike update_bl->" + update_bl);
+				// b_like_cnt +1처리
+				like_b = hs.like_b(board);
+				System.out.println("HJController BoardLike like_b->" + like_b);
+				System.out.println("HJController like_b board.getB_like_cnt()->" + board.getB_like_cnt());
+			}
+		}else { // 좋아요y 다 <- 좋아요-1해야함
+			// b_like_check 'y' -> 'n'으로 변경
+			dislike_bl = hs.dislike_bl(board_like);
+			System.out.println("HJController BoardLike dislike_bl->" + dislike_bl);
+			System.out.println("HJController dislike_bl board_like.getB_like_check()->" + board_like.getB_like_check());
+			// b_like_cnt -1처리
+			dislike_b = hs.dislike_b(board);
+			System.out.println("HJController BoardLike dislike_b->" + dislike_b);
+			System.out.println("HJController dislike_b board.getB_like_cnt()->" + board.getB_like_cnt());
+		}
+		
+		// b_like_check y or n 여부 가져오기
+		String b_like_check = hs.BLikeYN(board_like);
+		System.out.println("HJController BoardLike b_like_check->" + b_like_check);
 		// b_like_cnt 가져오기
 		int b_like_cnt = hs.selectLikeCnt(board);
-		System.out.println("HJController BoardDislike b_like_cnt->" + b_like_cnt);
+		System.out.println("HJController BoardLike b_like_cnt->" + b_like_cnt);
 		
 		JSONObject obj = new JSONObject();
-		obj.put("dislike_bl", dislike_bl);
-		obj.put("dislike_b", dislike_b);
-		obj.put("BLikeChk", BLikeChk);
-		obj.put("b_like_cnt", b_like_cnt);
 
+		obj.put("BLikeChk", BLikeChk);			// 좋아요 했는지 y여부
+		obj.put("BLikeChk_n", BLikeChk_n);		// 좋아요 했는지 n여부
+		obj.put("insert_bl", insert_bl);		// 좋아요를 처음 누를 때 b_like_check = "y"으로 insert
+		obj.put("like_b", like_b);				// b_like_cnt +1처리
+		obj.put("update_bl", update_bl);		// 기존에 'n'으로 되어있던 값을 b_like_check = "y" 수정처리
+		obj.put("dislike_bl", dislike_bl);		// b_like_check 'y' -> 'n'으로 변경
+		obj.put("dislike_b", dislike_b);		// b_like_cnt -1처리
+		obj.put("b_like_check", b_like_check);	// b_like_check 가져오기
+		obj.put("b_like_cnt", b_like_cnt);		// b_like_cnt 가져오기
+		
 		return obj.toJSONString();
 	}
 	
-	@RequestMapping("/HJBoardLike")
-	@ResponseBody
-	public String BoardLike(Board_like board_like) {
-		System.out.println("HJController BoardLike start");
-		
-		return null;
-	}
+	
 	
 	@RequestMapping(value = "/HJWriteForm")
 	public String WriteForm(Model model) {
@@ -216,39 +257,39 @@ public class HJController {
 		return savedName;
 	}
 	
-	@RequestMapping(value = "uploadFileDelete", method = RequestMethod.GET)
-	public String uploadFileDelete(HttpServletRequest request, Model model) throws Exception {
-		String uploadPath = request.getSession().getServletContext().getRealPath("/upload/");
-		String deleteFile = uploadPath + "036b6fc5-f078-48e4-9cf9-27e9f4da7719_jung1.jpg";
-		logger.info("deleteFile : " + deleteFile);
-		System.out.println("uploadFileDelete POST start");
-		int delResult = uploadFileDelete(deleteFile);
-		logger.info("deleteFile result : " + deleteFile);
-		model.addAttribute("deleteFile", deleteFile);
-		model.addAttribute("delResult", delResult);
-				
-		return "forward:HJBoardDetail";
-	}
-
-	private int uploadFileDelete(String deleteFileName) throws Exception {
-		int result = 0;
-		logger.info("deleteFileName result : " + deleteFileName);
-		File file = new File(deleteFileName);
-		
-		if(file.exists()) { // 파일이 존재할 때
-			if(file.delete()) { // 파일이 존재해서 삭제했을 때
-				System.out.println("파일 삭제 성공");
-				result = 1;
-			}else { // 파일이 존재하지만 삭제하지 못 했을 때
-				System.out.println("파일 삭제 실패");
-				result = 0;
-			}
-		}else { // 파일이 없을 때
-			System.out.println("파일이 존재하지 않습니다.");
-			result = -1;
-		}
-		return result;
-	}
+//	@RequestMapping(value = "uploadFileDelete", method = RequestMethod.GET)
+//	public String uploadFileDelete(HttpServletRequest request, Model model) throws Exception {
+//		String uploadPath = request.getSession().getServletContext().getRealPath("/upload/");
+//		String deleteFile = uploadPath + "036b6fc5-f078-48e4-9cf9-27e9f4da7719_jung1.jpg";
+//		logger.info("deleteFile : " + deleteFile);
+//		System.out.println("uploadFileDelete POST start");
+//		int delResult = uploadFileDelete(deleteFile);
+//		logger.info("deleteFile result : " + deleteFile);
+//		model.addAttribute("deleteFile", deleteFile);
+//		model.addAttribute("delResult", delResult);
+//				
+//		return "forward:HJBoardDetail";
+//	}
+//
+//	private int uploadFileDelete(String deleteFileName) throws Exception {
+//		int result = 0;
+//		logger.info("deleteFileName result : " + deleteFileName);
+//		File file = new File(deleteFileName);
+//		
+//		if(file.exists()) { // 파일이 존재할 때
+//			if(file.delete()) { // 파일이 존재해서 삭제했을 때
+//				System.out.println("파일 삭제 성공");
+//				result = 1;
+//			}else { // 파일이 존재하지만 삭제하지 못 했을 때
+//				System.out.println("파일 삭제 실패");
+//				result = 0;
+//			}
+//		}else { // 파일이 없을 때
+//			System.out.println("파일이 존재하지 않습니다.");
+//			result = -1;
+//		}
+//		return result;
+//	}
 	
 	@RequestMapping(value = "/HJBoardDelete")
 	public String BoardDelete(Board board, Model model) {

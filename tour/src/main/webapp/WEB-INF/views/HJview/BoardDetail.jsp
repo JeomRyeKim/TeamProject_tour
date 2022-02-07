@@ -21,41 +21,50 @@ function like_func(){
 		alert("로그인 해주세요");
 	}// 로그인O
 	else { 
-		var BLikeChk = ${BLikeChk}
-		alert("BLikeChk->" + BLikeChk);
+		var selB_like_check = $('#b_like_check').val();
+		alert("selB_like_check->" + selB_like_check);
 		var selB_kind = ${boardDetail.b_kind};
 		var selB_no = ${boardDetail.b_no};
-// 		var selM_id = $("#p_id").val;
-		var selM_id = '<%=(String)session.getAttribute("m_id")%>';
+		var session_id = document.getElementById('session_id').value;
 		alert("selB_kind->" + selB_kind + ", selB_no->" + selB_no);
-		alert("좋아요 누르는 사람 selM_id->" + selM_id);
+		alert('session_id->' + session_id);
 		
-		if(BLikeChk == 1){ // 좋아요 했었던 사람
-			alert("좋아요를 취소하시겠습니까?");
-			$.ajax(
-					{
-						url:"<%=context%>/HJBoardDislike",
-						data:{b_kind : selB_kind , b_no : selB_no, m_id : selM_id}, 
-						dataType:'json', 
-						success:function(data){
-							alert("ajax 좋아요 취소 data.dislike_bl->" + data.dislike_bl);
-							alert("ajax 좋아요 취소 data.dislike_b->" + data.dislike_b);
-							alert("ajax 좋아요 취소 data.BLikeChk->" + data.BLikeChk);
-							alert("ajax 좋아요 취소 data.b_like_cnt->" + data.b_like_cnt);
-							if(data.dislike_bl == '1' && data.dislike_b == '1'){
-								alert("좋아요 취소 처리가 완료됐습니다!");
-								
-							}
+		alert("좋아요를 누르시겠습니까?");
+		$.ajax(
+				{
+					url:"<%=context%>/HJBoardLike",
+					data:{b_kind : selB_kind , b_no : selB_no, m_id : session_id, b_like_check : selB_like_check}, 
+					dataType:'json', 
+					success:function(data){
+						alert("ajax 좋아요 y여부 data.BLikeChk->" + data.BLikeChk);
+						alert("ajax 좋아요 n여부 data.BLikeChk_n->" + data.BLikeChk_n);
+						alert("ajax 좋아요 insert 여부 data.insert_bl->" + data.insert_bl);
+						alert("ajax 좋아요 b_like_cnt +1여부 data.like_b->" + data.like_b);
+						alert("ajax 좋아요 update 여부 data.update_bl->" + data.update_bl);
+						alert("ajax 좋아요 b_like_check 'y' -> 'n'으로 변경 여부 data.dislike_bl->" + data.dislike_bl);
+						alert("ajax 좋아요b_like_cnt -1여부 data.dislike_b->" + data.dislike_b);
+						alert("ajax 좋아요 y or n여부 data.b_like_check->" + data.b_like_check);
+						alert("ajax 좋아요 총 개수 data.b_like_cnt->" + data.b_like_cnt);
+						
+						$("#b_like_check").val(data.b_like_check);
+						$("#b_like_cnt").val(data.b_like_cnt);
+						if(data.b_like_check == 'y'){
+							document.getElementById("like_img").src = "./image/like/heart_like.png";
+						}else{
+							document.getElementById("like_img").src = "./image/like/heart_dislike.png";
 						}
+					},
+					error:function(data){
+						alert("좋아요 error났습니다!");
 					}
-			);
-		}else{ // 좋아요 하지 않았던 사람
-			alert("좋아요를 누르시겠습니까?");
-			
-		}
+				}
+		);
 	}
 }
 </script>
+<style>
+#b_like_cnt{}
+</style>
 </head>
 <body>
 <%@include file="../header1.jsp" %>
@@ -120,16 +129,18 @@ function like_func(){
 </form>
 </div>
 
-<input type="hidden" id="BLikeChk" value="${BLikeChk}">
+<input type="hidden" id="session_id" value="${sessionScope.m_id}"> 
+<input type="hidden" id="b_like_check" value="${b_like_check}">
+<%-- <c:set var="session_id" value="${sessionScope.m_id}"></c:set> --%>
 <!-- 좋아요 -->
 <div class="container">
   <div class="row">
     <div class="col text-center">
       <c:choose>
-        <c:when test="${BLikeChk == 1}"> <!-- 좋아요O 사람에게 보이는 이미지 : 회원 -->
-	      <a href="javascript:like_func();" style="text-decoration:none" class="h3">
-	        <img src='image/like/heart_like.png' id="like_img">
-	        ${boardDetail.b_like_cnt}
+        <c:when test='${b_like_check == "y"}'> <!-- 좋아요O 사람에게 보이는 이미지 : 회원 -->
+	      <a href="javascript:like_func();" style="text-decoration:none" class="h3" data-value>
+	        <img src='image/like/heart_like.png' id="like_img" class="likeImage">
+	        <input type="text" id="b_like_cnt" style="border:none" value="${boardDetail.b_like_cnt}" readonly>
 		  </a> 
 	    </c:when>
 	    <c:otherwise> <!-- 좋아요X 사람에게 보이는 이미지 : 회원 or 비회원 -->
@@ -138,14 +149,45 @@ function like_func(){
 <%-- 	      	<span id="dislike" class="h3" onclick="javascript:like_func()">${boardDetail.b_like_cnt}</span> --%>
 <!-- 	      </label> -->
 	      <a href="javascript:like_func();" style="text-decoration:none" class="h3">
-	        <img src='image/like/heart_dislike.png' id="dislike_img">
-	        ${boardDetail.b_like_cnt}
+	        <img src='image/like/heart_dislike.png' id="like_img" class="likeImage">
+	        <input type="text" id="b_like_cnt" style="border:none" value="${boardDetail.b_like_cnt}" readonly>
+<%-- 	        ${boardDetail.b_like_cnt} --%>
 		  </a> 
 	    </c:otherwise>
 	  </c:choose> 
     </div>
   </div>
 </div>
+<pre>
+
+
+</pre>
+<div class="container">
+	<div class="row"><hr></div>
+</div>
+
+<!-- 댓글 -->
+<!-- <div>댓글  $개</div> -->
+<div class="container mt-3">
+  <h3>댓글 $</h3>
+  <form action="#">
+  <c:choose>
+   <c:when test="${sessionScope.m_id != null}">
+    <div class="mb-3 mt-3">
+      <label for="comment">작성자 닉네임</label>
+      <br>
+      <textarea class="form-control" rows="5" id="comment" name="text" placeholder="내용을 입력해주세요"></textarea>
+    </div>
+    <button type="submit" class="btn btn-outline-primary">등록</button>
+   </c:when>
+   <c:otherwise>
+   	  <textarea class="form-control" rows="5" id="comment" name="text" placeholder="로그인이 필요합니다" readonly></textarea>
+   </c:otherwise>
+  </c:choose>
+  </form>
+</div>
+<!-- 댓글 목록 출력 위치 -->
+<div id="com_list"></div>
 
 <div class="container ">
   <c:choose>

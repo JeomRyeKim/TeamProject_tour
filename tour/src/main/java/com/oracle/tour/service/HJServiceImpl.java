@@ -96,6 +96,38 @@ public class HJServiceImpl implements HJService {
 	}
 
 	@Override
+	public int BLikeChk_n(Board_like board_like) {
+		System.out.println("HJServiceImpl BLikeChk_n start..");
+		int BLikeChk_n = hd.BLikeChk_n(board_like);
+		
+		return BLikeChk_n;
+	}
+	
+	@Override
+	public int insert_bl(Board_like board_like) {
+		System.out.println("HJServiceImpl selectLikeCnt start..");
+		int insert_bl = hd.insert_bl(board_like);
+		
+		return insert_bl;
+	}
+
+	@Override
+	public int like_b(Board board) {
+		System.out.println("HJServiceImpl like_b start..");
+		int like_b = hd.like_b(board);
+		
+		return like_b;
+	}
+	
+	@Override
+	public int update_bl(Board_like board_like) {
+		System.out.println("HJServiceImpl update_bl start..");
+		int update_bl = hd.update_bl(board_like);
+		
+		return update_bl;
+	}
+
+	@Override
 	public int dislike_bl(Board_like board_like) {
 		System.out.println("HJServiceImpl dislike_bl start..");
 		int dislike_bl = hd.dislike_bl(board_like);
@@ -112,9 +144,18 @@ public class HJServiceImpl implements HJService {
 	}
 
 	@Override
+	public String BLikeYN(Board_like board_like) {
+		System.out.println("HJServiceImpl BLikeYN start..");
+		String b_like_check = hd.BLikeYN(board_like);
+		
+		return b_like_check;
+	}
+
+	@Override
 	public int selectLikeCnt(Board board) {
 		System.out.println("HJServiceImpl selectLikeCnt start..");
 		int b_like_cnt = hd.selectLikeCnt(board);
+		
 		return b_like_cnt;
 	}
 

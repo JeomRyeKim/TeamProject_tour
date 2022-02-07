@@ -26,11 +26,22 @@ public interface HJDao {
 
 	int BLikeChk(Board_like board_like);
 
+	int BLikeChk_n(Board_like board_like);
+	
+	int insert_bl(Board_like board_like);
+
+	int like_b(Board board);
+	
+	int update_bl(Board_like board_like);
+
 	int dislike_bl(Board_like board_like);
 
 	int dislike_b(Board board);
+	
+	String BLikeYN(Board_like board_like);
 
 	int selectLikeCnt(Board board);
+
 
 
 }

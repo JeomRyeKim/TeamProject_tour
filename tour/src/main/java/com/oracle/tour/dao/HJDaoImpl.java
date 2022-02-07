@@ -187,6 +187,57 @@ public class HJDaoImpl implements HJDao {
 		}
 		return BLikeChk;
 	}
+	@Override
+	public int BLikeChk_n(Board_like board_like) {
+		System.out.println("HJDaoImpl BLikeChk_n Start....");
+		int BLikeChk_n = 0;
+		try {
+			BLikeChk_n = session.selectOne("hjBLikeChk_n", board_like);
+			System.out.println("HJDaoImpl board.getM_id()->" + board_like.getM_id());
+			System.out.println("HJDaoImpl BLikeChk_n->" + BLikeChk_n);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl BLikeChk_n Exception->" + e.getMessage());
+		}
+		return BLikeChk_n;
+	}
+	// 좋아요를 처음 누를 때 'y'으로 insert
+	@Override
+	public int insert_bl(Board_like board_like) {
+		System.out.println("HJDaoImpl insert_bl Start....");
+		int insert_bl = 0;
+		try {
+			insert_bl = session.insert("hjinsert_bl", board_like);
+			System.out.println("HJDaoImpl insert_bl->" + insert_bl);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl insert_bl Exception->" + e.getMessage());
+		}
+		return insert_bl;
+	}
+	// b_like_cnt +1처리
+	@Override
+	public int like_b(Board board) {
+		System.out.println("HJDaoImpl like_b Start....");
+		int like_b = 0;
+		try {
+			like_b = session.update("hjLike_b", board);
+			System.out.println("HJDaoImpl like_b->" + like_b);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl like_b Exception->" + e.getMessage());
+		}
+		return like_b;
+	}
+	// b_like_check = "y" 수정처리
+	@Override
+	public int update_bl(Board_like board_like) {
+		System.out.println("HJDaoImpl update_bl Start....");
+		int update_bl = 0;
+		try {
+			update_bl = session.update("hjUpdate_bl", board_like);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl update_bl Exception->" + e.getMessage());
+		}
+		return update_bl;
+	}
 	// b_like_check 'y' -> 'n'으로 변경
 	@Override
 	public int dislike_bl(Board_like board_like) {
@@ -215,7 +266,20 @@ public class HJDaoImpl implements HJDao {
 		}
 		return dislike_b;
 	}
-
+	// b_like_check y or n 여부 가져오기
+	@Override
+	public String BLikeYN(Board_like board_like) {
+		System.out.println("HJDaoImpl BLikeYN Start....");
+		String b_like_check = null;
+		try {
+			b_like_check = session.selectOne("hjBLikeYN", board_like);
+			System.out.println("HJDaoImpl BLikeYN b_like_check->" + b_like_check);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl BLikeYN Exception->" + e.getMessage());
+		}
+		return b_like_check;
+	}
+	// b_like_cnt 가져오기
 	@Override
 	public int selectLikeCnt(Board board) {
 		System.out.println("HJDaoImpl selectLikeCnt Start....");
@@ -226,11 +290,8 @@ public class HJDaoImpl implements HJDao {
 		} catch (Exception e) {
 			System.out.println("HJDaoImpl selectLikeCnt Exception->" + e.getMessage());
 		}
-		
 		return b_like_cnt;
 	}
-
-
 
 	
 }
