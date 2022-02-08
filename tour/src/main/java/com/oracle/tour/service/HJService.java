@@ -18,8 +18,6 @@ public interface HJService {
 
 	Board BoardDetail(Board board);
 	
-	String getNickname(String m_id);
-
 	int insert(Board board);
 
 	int BoardDelete(Board board);
@@ -41,6 +39,8 @@ public interface HJService {
 	String BLikeYN(Board_like board_like);
 	
 	int selectLikeCnt(Board board);
+
+	int Boardmodify(Board board);
 	
 
 }

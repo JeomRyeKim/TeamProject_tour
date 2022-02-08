@@ -64,14 +64,6 @@ public class HJServiceImpl implements HJService {
 	}
 
 	@Override
-	public String getNickname(String m_id) {
-		System.out.println("HJServiceImpl getNickname start..");
-		String m_nickname = hd.getNickname(m_id);
-		
-		return m_nickname;
-	}
-
-	@Override
 	public int insert(Board board) {
 		System.out.println("HJServiceImpl insert start..");
 		int result = hd.insert(board);
@@ -157,6 +149,14 @@ public class HJServiceImpl implements HJService {
 		int b_like_cnt = hd.selectLikeCnt(board);
 		
 		return b_like_cnt;
+	}
+
+	@Override
+	public int Boardmodify(Board board) {
+		System.out.println("HJServiceImpl Boardmodify start..");
+		int modifyChk = hd.Boardmodify(board);
+		
+		return modifyChk;
 	}
 
 

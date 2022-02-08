@@ -137,24 +137,12 @@ public class HJDaoImpl implements HJDao {
 	}
 
 	@Override
-	public String getNickname(String m_id) {
-		System.out.println("HJDaoImpl getNickname Start....");
-		String m_nickname = null;
-		try {
-			m_nickname = session.selectOne("hjNicknameSelect", m_id);
-		} catch (Exception e) {
-			System.out.println("HJDaoImpl getNickname Exception->" + e.getMessage());
-		}
-		
-		return null;
-	}
-
-	@Override
 	public int insert(Board board) {
 		System.out.println("HJDaoImpl insert Start....");
 		int result = 0;
 		try {
 			result = session.insert("hjBoardInsert", board);
+			System.out.println("HJDaoImpl insert result->" + result);
 		} catch (Exception e) {
 			System.out.println("HJDaoImpl insert Exception->" + e.getMessage());
 		}
@@ -291,6 +279,19 @@ public class HJDaoImpl implements HJDao {
 			System.out.println("HJDaoImpl selectLikeCnt Exception->" + e.getMessage());
 		}
 		return b_like_cnt;
+	}
+
+	// 게시글 수정
+	@Override
+	public int Boardmodify(Board board) {
+		System.out.println("HJDaoImpl Boardmodify Start....");
+		int modifyChk = 0;
+		try {
+			modifyChk = session.update("hjBoardmodify", board);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl Boardmodify Exception->" + e.getMessage());
+		}
+		return modifyChk;
 	}
 
 	

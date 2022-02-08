@@ -33,19 +33,21 @@ function SearchText(keyword){
 
 function writeCheck(){
 	var m_id = $('#id').val();
+// 	var session_id = document.getElementById('session_id').value;
 	var m_nickname = $('#nickname').val();
 	var m_kind = $('#kind').val();
 	var m_active_kind = $('#active_kind').val();
-// 	alert("m_id->" + m_id);
+	alert("m_id->" + m_id);
+// 	alert("session_id->" + session_id);
 // 	alert("m_nickname->" + m_nickname);
 // 	alert("m_kind->" + m_kind);
 // 	alert("m_active_kind->" + m_active_kind);
 	
 	if((m_id != null || m_id != "" || !StringUtils.isEmpty(m_id)) && m_active_kind == 1) {
-		location.href="./HJWriteForm?m_id=" + m_id + "&m_nickname=" + m_nickname + "&m_kind=" + m_kind;
+		location.href="./HJWriteForm?m_id=" + m_id + "&m_nickname=" + m_nickname;
 	} else {
 		alert("활동중인 회원만 게시글 작성이 가능합니다");
-// 		location.href="HJBoard?m_id=${sessionScope.m_id}"
+// // 		location.href="HJBoard?m_id=${sessionScope.m_id}"
 	}
 }
 </script>
@@ -58,15 +60,16 @@ function writeCheck(){
 <pre>
 
 </pre>
-	<label><a class="btn btn-outline-secondary" value="a"  id="all"    onclick="location.href = '/HJBoard'">전체</a></label>
-	<label><a class="btn btn-outline-secondary" value="1"  id="free"   onclick="location.href = '/HJBoard?b_kind=1'">자유</a></label>
-	<label><a class="btn btn-outline-secondary" value="2"  id="review" onclick="location.href = '/HJBoard?b_kind=2'">후기</a></label>
-	<label><a class="btn btn-outline-secondary" value="3"  id="qna"    onclick="location.href = '/HJBoard?b_kind=3'">QnA</a></label>
+	<label><a class="btn btn-outline-secondary" value="a"  id="all"    onclick="location.href = '/HJBoard?&m_id=${member.m_id}'">전체</a></label>
+	<label><a class="btn btn-outline-secondary" value="1"  id="free"   onclick="location.href = '/HJBoard?b_kind=1&m_id=${member.m_id}'">자유</a></label>
+	<label><a class="btn btn-outline-secondary" value="2"  id="review" onclick="location.href = '/HJBoard?b_kind=2&m_id=${member.m_id}'">후기</a></label>
+	<label><a class="btn btn-outline-secondary" value="3"  id="qna"    onclick="location.href = '/HJBoard?b_kind=3&m_id=${member.m_id}'">QnA</a></label>
 	
 	<a class="btn btn-outline-secondary btn-sm" style="float:right;" readonly>전체글 : ${total}</a>
 	<c:set var="num" value="${pg.total-pg.start+1}"></c:set>
 		
 	<br>m_id : ${member.m_id}
+	<br>sessionScope.m_id : ${sessionScope.m_id}
 	<br>m_nickname : ${member.m_nickname}
 	<br>m_kind : ${member.m_kind}
 	<br>m_active_kind : ${member.m_active_kind}
@@ -88,10 +91,16 @@ function writeCheck(){
     </thead>
 	<tbody>
     <c:forEach var="board" items="${listBoard}">
+    	<!-- 현재 로그인 중 id -->
     	<input type="hidden" id="id" value="${member.m_id}">
+    	<input type="hidden" id="session_id" value="${sessionScope.m_id}">
+    	<!-- 글을 작성한 글쓴이 id -->
+    	<input type="hidden" id="b_id" value="${board.m_id}">
     	<input type="hidden" id="nickname" value="${member.m_nickname}">
     	<input type="hidden" id="kind" value="${member.m_kind}">
     	<input type="hidden" id="active_kind" value="${member.m_active_kind}">
+    	<input type="hidden" id="b_lokc" value="${board.b_lock}">
+    	<input type="hidden" id="b_notice" value="${board.b_notice}">
 <%--     	<input type="hidden" id="b_kind" value="${board.b_kind}"> --%>
 <%--     	<input type="hidden" id="m_id" value="${board.m_id}"> --%>
 	      <tr id="bb">
@@ -107,8 +116,28 @@ function writeCheck(){
 	      	  <c:if test="${board.b_kind eq 4}">
 	        	<td><b style="color: red;">[공지사항]</b></td>
 	          </c:if>
-	        <td>${board.b_Group}</td>
-        	<td><a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}">${board.b_title}</td>
+	        <td>${board.b_no}</td>
+	        <!-- when 비밀글O, 로그인X -->
+			<!-- when 비밀글O, 본인글X, 관리자X -->
+			<!-- when 비밀글O, 본인글O, 관리자X -->
+			<!-- when 비밀글O, 본인글X, 관리자O -->
+	        <c:choose>
+	        	<c:when test='${board.b_lock == "y" && member.m_id == null}'>
+	        		<td>비밀글입니다. 작성자와 관리자만 확인 가능합니다.</td>
+	        	</c:when>
+	        	<c:when test='${board.b_lock == "y" && board.m_id != member.m_id && member.m_kind != "2"}'>
+	        		<td>비밀글입니다. 작성자와 관리자만 확인 가능합니다.</td>
+	        	</c:when>
+	        	<c:when test='${board.b_lock == "y" && board.m_id == member.m_id && member.m_kind != "2"}'>
+	        		<td><a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}">${board.b_title}</td>
+	        	</c:when>
+	        	<c:when test='${board.b_lock == "y" && board.m_id != member.m_id && member.m_kind == "2"}'>
+		        	<td><a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}">${board.b_title}</td>
+	        	</c:when>
+	        	<c:otherwise>
+		        	<td><a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}">${board.b_title}</td>
+	        	</c:otherwise>
+	        </c:choose>
 	        <td>${board.m_nickname}</td>
 	        <td>${board.b_date}</td>
 	        <td>
@@ -134,7 +163,7 @@ function writeCheck(){
 		<a href="<c:url value="HJBoard?currentPage=${i}&m_id=${member.m_id}"/>">[${i}]</a>
 	</c:forEach>
 	<c:if test="${pg.endPage < pg.totalPage}">
-		<a href="<c:url value="HJBoard?currentPage=${pg.startPage+pg.pageBlock}"/>">[다음]</a>
+		<a href="<c:url value="HJBoard?currentPage=${pg.startPage+pg.pageBlock}&m_id=${member.m_id}"/>">[다음]</a>
 	</c:if>
    </c:if>
   <!-- 전체, 검색O -->

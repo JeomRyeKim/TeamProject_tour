@@ -74,7 +74,7 @@ function like_func(){
 
 
 </pre>
-<form name="/HJBoardmodify" action="#" method="post">
+
 <%-- <c:set var="present_id" value="${sessionScope.m_id}" /> --%>
 <%-- <input type="hidden"  id="p_id" value="<c:out value="${present_id}"/>"> --%>
 <h5>
@@ -110,8 +110,14 @@ function like_func(){
 <hr>
 <p>boardDetail.b_filename : ${boardDetail.b_filename}
 <%-- <p>boardDetail.savedName : ${boardDetail.savedName} --%>
-<p><img src="" alt="게시판 이미지" width="500px" height="auto">
+<c:if test="${boardDetail.b_filename != null}">
+	<p><img alt="게시판 이미지" src="resources/image/board/${boardDetail.b_filename}" width="500px" height="auto">
+</c:if>
 <p>${boardDetail.b_contents}
+<p><input type="hidden" id="b_lock" value="${boardDetail.b_lock}">
+
+
+
 <p>sessionScope.m_kind 			: ${sessionScope.m_kind}
 <p>sessionScope.m_nickname 		: ${sessionScope.m_nickname}
 <p>sessionScope.m_active_kind	: ${sessionScope.m_active_kind}
@@ -123,10 +129,11 @@ function like_func(){
 <p>boardDetail.b_kind 			: ${boardDetail.b_kind}
 <p>boardDetail.b_no 			: ${boardDetail.b_no}
 <p>boardDetail.m_id 			: ${boardDetail.m_id}
+<p>boardDetail.b_notice 		: ${boardDetail.b_notice}
 <pre>
 
 </pre>
-</form>
+
 </div>
 
 <input type="hidden" id="session_id" value="${sessionScope.m_id}"> 
@@ -144,14 +151,9 @@ function like_func(){
 		  </a> 
 	    </c:when>
 	    <c:otherwise> <!-- 좋아요X 사람에게 보이는 이미지 : 회원 or 비회원 -->
-<!--           <label> -->
-<!--           	<img src='image/like/heart_dislike.png' id="dislike_img"> -->
-<%-- 	      	<span id="dislike" class="h3" onclick="javascript:like_func()">${boardDetail.b_like_cnt}</span> --%>
-<!-- 	      </label> -->
 	      <a href="javascript:like_func();" style="text-decoration:none" class="h3">
 	        <img src='image/like/heart_dislike.png' id="like_img" class="likeImage">
 	        <input type="text" id="b_like_cnt" style="border:none" value="${boardDetail.b_like_cnt}" readonly>
-<%-- 	        ${boardDetail.b_like_cnt} --%>
 		  </a> 
 	    </c:otherwise>
 	  </c:choose> 
@@ -189,17 +191,28 @@ function like_func(){
 <!-- 댓글 목록 출력 위치 -->
 <div id="com_list"></div>
 
+<form action="HJBoardmodifyForm?m_id=${sessionScope.m_id}&b_kind=${boardDetail.b_kind}&b_no=${boardDetail.b_no}" 
+	  method="post" enctype="multipart/form-data">
+<input type="hidden" id="b_kind" name="b_kind" value="${boardDetail.b_kind}">
+<input type="hidden" id="b_title" name="b_title" value="${boardDetail.b_title}">
+<input type="hidden" id="m_nickname" name="m_nickname" value="${boardDetail.m_nickname}">
+<input type="hidden" id="b_date" name="b_date" value="${boardDetail.b_date}">
+<input type="hidden" id="b_hit" name="b_hit" value="${boardDetail.b_hit}">
+<input type="hidden" id="b_filename" name="b_filename" value="${boardDetail.b_filename}">
+<input type="hidden" id="b_contents" name="b_contents" value="${boardDetail.b_contents}">
+<input type="hidden" id="b_lock" name="b_lock" value="${boardDetail.b_lock}">
+<input type="hidden" id="b_notice" name="b_notice" value="${boardDetail.b_notice}">
 <div class="container ">
   <c:choose>
     <c:when test="${sessionScope.m_id == boardDetail.m_id}"> <!-- 본인이 쓴 글일 때 -->
       <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#myModal">삭제</button>
-	  <a type="submit" class="btn btn-outline-primary">수정</a>
+	  <input type="submit" value="수정" class="btn btn-outline-primary">
   	  <a href="HJboardReply_view?b_kind=${boardDetail.b_kind}&b_no=${boardDetail.b_no}&m_id=${boardDetail.m_id}"
   	   	 class="btn btn-outline-success">답변</a>
     </c:when>
     <c:when test="${sessionScope.m_kind == 2}"> <!-- 관리자일 때 -->
       <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#myModal">삭제</button>
-	  <a type="submit" class="btn btn-outline-primary">수정</a>
+	  <input type="submit" value="수정" class="btn btn-outline-primary">
 	  <a href="HJboardReply_view?b_kind=${boardDetail.b_kind}&b_no=${boardDetail.b_no}&m_id=${boardDetail.m_id}"
 	 	 class="btn btn-outline-success">답변</a>
     </c:when>
@@ -212,6 +225,7 @@ function like_func(){
   </c:choose>
   	  <a href="/HJBoard?m_id=${sessionScope.m_id}" class="btn btn-outline-secondary">목록</a>
 </div>
+</form>
 <pre>
 
 </pre>

@@ -25,38 +25,38 @@ $(document).ready(function(){
 <%@include file="../header1.jsp" %>
 <%@include file="../header2.jsp" %>
 <div class="container mt-5">
-<h4><b>게시판 댓글입력</b></h4>
+<h4><b>게시판 답변글 입력</b></h4>
 <hr>
 <pre>
 
 
 </pre>
-<form>
-<table>
-    <input type="hidden" id="m_nickname" name="m_nickname" value="${boardDetail.m_nickname}">
+<form action="HJboardReply" method="post" enctype="multipart/form-data">
     <input type="hidden" id="m_id" name="m_id" value="${boardDetail.m_id}">
-    <input type="hidden" id="m_kind" name="m_kind" value="${boardDetail.m_kind}">
+    <input type="hidden" id="m_nickname" name="m_nickname" value="${boardDetail.m_nickname}">
+    <input type="hidden" id="m_kind" name="b_kind" value="${boardDetail.b_kind}">
+<table>
 	<tr>
 		<th class="row mt-1 mb-1" style="width:170px"><b align="center">카테고리</b></th>
-		<c:if test="${boardDetail.m_kind == 1}">
+		<c:if test="${boardDetail.b_kind == 1}">
 			<td>
 			    [자유]
 			    <label><input type="checkbox" id="b_lock" name="b_lock" value="n"> 비밀글</label>
 		    </td>
 		</c:if>
-		<c:if test="${boardDetail.m_kind == 2}">
+		<c:if test="${boardDetail.b_kind == 2}">
 			<td>
 			    [후기]
 			    <label><input type="checkbox" id="b_lock" name="b_lock" value="n"> 비밀글</label>
 		    </td>
 		</c:if>
-		<c:if test="${boardDetail.m_kind == 3}">
+		<c:if test="${boardDetail.b_kind == 3}">
 			<td>
 			    [QnA]
 			    <label><input type="checkbox" id="b_lock" name="b_lock" value="n"> 비밀글</label>
 		    </td>
 		</c:if>
-		<c:if test="${boardDetail.m_kind == 4}">
+		<c:if test="${boardDetail.b_kind == 4}">
 			<td>
 			    [공지사항]
 			    <label><input type="checkbox" id="b_lock" name="b_lock" value="n"> 비밀글</label>
@@ -75,13 +75,14 @@ $(document).ready(function(){
     	<th class="row mt-1 mb-1" style="width:170px"><b align="center">내용</b></th> 
 		<td><textarea id="b_contents" name="b_contents" style="width: 1100px; height: 400px;" required>${boardDetail.b_contents}</textarea></td>
 	<tr>
-<!-- 	<tr> -->
-<!--     	<th class="row mt-1 mb-1" style="width:170px"><b align="center">첨부 파일</b></th> -->
-<!--     	<td> -->
-<!-- 			<input type="file" name="b_filename" id="b_filename"> -->
-<!-- 			<div class="select_img"><img style="width: 500px; height: auto;" id="img" name="img"></div> -->
-<!-- 		</td> -->
-<!-- 	</tr> -->
+	<tr>
+    	<th class="row mt-1 mb-1" style="width:170px"><b align="center">첨부 파일</b></th>
+    	<td>
+			<input type="file" id="filename" name="filename">
+			<span id="imgdel"><a href="#" id="preview-de" class="btn btn-outline-success">삭제</a></span>
+			<div class="select_img"><img style="width: 500px; height: auto;" id="img" name="img"></div>
+		</td>
+	</tr>
 </table>
 <pre>
 
@@ -97,5 +98,31 @@ $(document).ready(function(){
 
 </pre>
 <%@include file="../footer.jsp" %>
+ <script>
+  $("#filename").change(function(){
+   if(this.files && this.files[0]) {
+    var reader = new FileReader;
+    if(document.getElementById("img")){
+    	alert("img있음!");
+    }else{
+    	alert("img없음!");
+	    var str = '<img style="width: 500px; height: auto;" id="img" name="img">'
+	    alert("str->" + str);
+    	$(".select_img").append(str);
+    }
+    
+    reader.onload = function(data) {
+     $(".select_img img").attr("src", data.target.result).width(500);        
+    }
+    reader.readAsDataURL(this.files[0]);
+   }
+  });
+  
+  $('#imgdel').on('click', '#preview-de', function () {
+	  alert("사진 삭제합니다");	  
+	  $(".select_img").empty()
+	  $("#filename").val("");
+  });
+ </script>
 </body>
 </html>

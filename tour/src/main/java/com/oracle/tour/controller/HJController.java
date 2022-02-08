@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.oracle.tour.dto.Board;
 import com.oracle.tour.dto.Board_like;
@@ -36,8 +37,8 @@ public class HJController {
 	public HJController(HJService hs) {
 		this.hs = hs;
 	}
-	
-	@GetMapping(value = "/HJBoard")
+	// 게시판 들어갈 때 검색, 페이징처리
+	@RequestMapping("/HJBoard")
 	public String BoardList(Board board, String searchType, String keyword, 
 							String currentPage, Model model, Member member, String m_id, 
 							HttpServletRequest request) {
@@ -85,6 +86,7 @@ public class HJController {
 		return "HJview/Board";
 	}
 	
+	// 상세글(제목 누를 때) 들어갈 때
 	@GetMapping("/HJBoardDetail")
 	public String BoardDetail(Board board, Board_like board_like, Model model) {
 		logger.info("BoardDetail start");
@@ -96,10 +98,8 @@ public class HJController {
 		System.out.println("HJController BoardDetail boardDetail.getB_title()->" + boardDetail.getB_title());
 		model.addAttribute("boardDetail", boardDetail);
 		
-		// 좋아요
 		String m_id = board.getM_id();
 		System.out.println("로그인 했다면 HJController BoardDetail m_id->" + m_id);
-		
 		// 좋아요 y or n여부?
 		// 로그인 했을 때
 		if(m_id != null) {
@@ -190,107 +190,68 @@ public class HJController {
 		return obj.toJSONString();
 	}
 	
-	
-	
-	@RequestMapping(value = "/HJWriteForm")
-	public String WriteForm(Model model) {
+	// 게시글 작성
+	@GetMapping("/HJWriteForm")
+	public String WriteForm(Board board, Model model) {
 		logger.info("WriteForm start");
+		System.out.println("HJController WriteForm start");
 		
 		return "HJview/WriteForm";
 	}
-	
-	@RequestMapping(value = "/HJWrite", method = RequestMethod.POST)
-	public String Write(HttpServletRequest request, MultipartFile file1, Board board, Model model) throws Exception {
+	@PostMapping("HJWrite")
+	public String Write(HttpServletRequest request, MultipartFile filename, Board board, Model model) throws Exception {
 		logger.info("Write start");
+		System.out.println("HJController Write start");
 		
-		String uploadPath = request.getSession().getServletContext().getRealPath("/tour_board_image/");
-		
-		System.out.println("Write POST start");
-		logger.info("OriginalFilename : " + file1.getOriginalFilename());
-		logger.info("Size : " + file1.getSize());
-		logger.info("ContentType : " + file1.getContentType());
-		logger.info("uploadPath : " + uploadPath);
-		
-		String savedName = uploadFile(file1.getOriginalFilename(), file1.getBytes(), uploadPath);
-		logger.info("savedName : " + savedName);
-//		model.addAttribute("savedName", savedName);
-//		model.addAttribute("uploadPath", uploadPath);
-		board.setM_nickname(request.getParameter("m_nickname"));
-		board.setM_id(request.getParameter("m_id"));
-		board.setB_kind(Integer.parseInt(request.getParameter("b_kind")));
-		board.setB_lock(request.getParameter("b_lock"));
-		board.setB_title(request.getParameter("b_title"));
-		board.setB_contents(request.getParameter("b_contents"));
-		board.setB_filename(request.getParameter("b_filename"));
+		String b_filename = board.getB_filename();
+		System.out.println("HJController Write b_filename->" + b_filename);
 		
 		// 파일 업로드
-		
-		
-		
-		int result = hs.insert(board); // 성공시 1, 실패시 0
-		System.out.println("board.getB_filename()->" + board.getB_filename());
-		System.out.println("board.getM_nickname()->" + board.getM_nickname());
-		if (result > 0) return "forward:HJBoard";
-		else {
+		if(b_filename != null) {
+			String uploadPath = request.getSession().getServletContext().getRealPath("/resources/image/board");
+			System.out.println("Write POST start");
+			logger.info("OriginalFilename : " + filename.getOriginalFilename());
+			logger.info("Size : " + filename.getSize());
+			logger.info("ContentType : " + filename.getContentType());
+			logger.info("uploadPath : " + uploadPath);
+			
+			String savedName = uploadFile(filename.getOriginalFilename(), filename.getBytes(), uploadPath);
+			logger.info("savedName : " + savedName);
+			board.setB_filename(savedName);
+			System.out.println("HJController Write board.getB_lock()->" + board.getB_lock());
+		}
+			
+			System.out.println("***********HJController Write insert");
+			int result = hs.insert(board); // 성공시 1, 실패시 0
+			System.out.println("HJController Write insert result->" + result);
+			System.out.println("board.getB_notice()->" + board.getB_notice());
+			System.out.println("board.getB_filename()->" + board.getB_filename());
+			System.out.println("board.getM_nickname()->" + board.getM_nickname());
+		// 업데이트 성공시
+		if (result > 0) {
+			System.out.println("새글 등록 완료!!!!!!!!!");
+			// forward:HJBoard, /HJBoard, HJBoard 다 오류남
+			return "redirect:HJBoard";
+		}else {
 			model.addAttribute("msg","입력 실패 확인해 보세요");
-			return "forward:writeForm";
+			return "forward:HJWriteForm";
 		}
 	}
+	// 파일 업로드 처리
 	private String uploadFile(String originalName, byte[] fileData, String uploadPath) throws Exception {
+		System.out.println("uploadFile start");
 		UUID uid = UUID.randomUUID(); // UUID : 세계적으로 유일한 번호
-		// requestPath = requestPath + "/resource/image";
-		System.out.println("uploadPath->" + uploadPath);
-		
-		// Directory 생성 <- 폴더 = 디렉토리 같은 의미
-		File fileDirectory = new File(uploadPath);
-		if(!fileDirectory.exists()) { // 폴더가 존재하지 않을 때
-			fileDirectory.mkdirs();	// 폴더를 만들어주는 로직
-			System.out.println("업로드용 폴더 생성 : " + uploadPath);
-		}
 		
 		String savedName = uid.toString() + "_" + originalName;
-		logger.info("savedName : " + savedName);
+		System.out.println("uploadPath->" + uploadPath);
+		System.out.println("savedName : " + savedName);
 		File target = new File(uploadPath, savedName); // 진짜로 업로드 처리
-//		File target = new File(requestPath, savedName);
 		FileCopyUtils.copy(fileData, target); //org.springframework.util.FileCopyUtils;
 		
 		return savedName;
 	}
 	
-//	@RequestMapping(value = "uploadFileDelete", method = RequestMethod.GET)
-//	public String uploadFileDelete(HttpServletRequest request, Model model) throws Exception {
-//		String uploadPath = request.getSession().getServletContext().getRealPath("/upload/");
-//		String deleteFile = uploadPath + "036b6fc5-f078-48e4-9cf9-27e9f4da7719_jung1.jpg";
-//		logger.info("deleteFile : " + deleteFile);
-//		System.out.println("uploadFileDelete POST start");
-//		int delResult = uploadFileDelete(deleteFile);
-//		logger.info("deleteFile result : " + deleteFile);
-//		model.addAttribute("deleteFile", deleteFile);
-//		model.addAttribute("delResult", delResult);
-//				
-//		return "forward:HJBoardDetail";
-//	}
-//
-//	private int uploadFileDelete(String deleteFileName) throws Exception {
-//		int result = 0;
-//		logger.info("deleteFileName result : " + deleteFileName);
-//		File file = new File(deleteFileName);
-//		
-//		if(file.exists()) { // 파일이 존재할 때
-//			if(file.delete()) { // 파일이 존재해서 삭제했을 때
-//				System.out.println("파일 삭제 성공");
-//				result = 1;
-//			}else { // 파일이 존재하지만 삭제하지 못 했을 때
-//				System.out.println("파일 삭제 실패");
-//				result = 0;
-//			}
-//		}else { // 파일이 없을 때
-//			System.out.println("파일이 존재하지 않습니다.");
-//			result = -1;
-//		}
-//		return result;
-//	}
-	
+	// 게시글 삭제
 	@RequestMapping(value = "/HJBoardDelete")
 	public String BoardDelete(Board board, Model model) {
 		logger.info("BoardDelete start");
@@ -300,14 +261,64 @@ public class HJController {
 		return "redirect:HJBoard";
 	}	
 	
-	@PostMapping(value = "/HJBoardmodify")
-	public String Boardmodify(Model model) {
+	// 게시글 수정
+	@PostMapping("HJBoardmodifyForm")
+	public String BoardmodifyForm(Board board, Model model) {
+		logger.info("HJBoardmodifyForm start");
+		System.out.println("HJController BoardmodifyForm board.getM_id()->" + board.getM_id());
+		System.out.println("HJController BoardmodifyForm board.getB_kind()->" + board.getB_kind());
+		System.out.println("HJController BoardmodifyForm board.getB_no()->" + board.getB_no());
+		
+		Board boardDetail = hs.BoardDetail(board);
+		System.out.println("HJController BoardmodifyForm boardDetail.getB_title()->" + boardDetail.getB_title());
+		model.addAttribute("boardDetail", boardDetail);
+		
+		return "HJview/Boardmodify";
+	}	
+	@PostMapping("HJBoardmodify")
+	public String Boardmodify(HttpServletRequest request, MultipartFile filename, RedirectAttributes rttr, Board board, Model model) throws Exception {
 		logger.info("Boardmodify start");
+		System.out.println("HJController Boardmodify board.getB_kind()->" + board.getB_kind());
+		System.out.println("HJController Boardmodify board.getB_no()->" + board.getB_no());
+		System.out.println("HJController Boardmodify board.getM_id()->" + board.getM_id());
+		System.out.println("HJController Boardmodify board.getM_nickname()->" + board.getM_nickname());
 		
+		String b_filename = board.getB_filename();
+		System.out.println("HJController Boardmodify b_filename->" + b_filename);
 		
-		return "Boardmodify";
+		// 파일 업로드
+		if(b_filename != null) {
+		String uploadPath = request.getSession().getServletContext().getRealPath("/resources/image/board");
+		String savedName = uploadFile(filename.getOriginalFilename(), filename.getBytes(), uploadPath);
+		logger.info("savedName : " + savedName);
+		board.setB_filename(savedName);
+		System.out.println("HJController Boardmodify board.getB_lock()->" + board.getB_lock());
+		}
+		
+		int modifyChk = hs.Boardmodify(board);
+		System.out.println("HJController Boardmodify modifyChk->" + modifyChk);
+		
+		String m_id = board.getM_id();
+		System.out.println("로그인 했다면 HJController Boardmodify m_id->" + m_id);
+		int b_kind = board.getB_kind();
+		System.out.println("로그인 했다면 HJController Boardmodify b_kind->" + b_kind);
+		int b_no = board.getB_no();
+		System.out.println("로그인 했다면 HJController Boardmodify b_no->" + b_no);
+		// 수정 성공시
+		if (modifyChk > 0) {
+			System.out.println("게시글 수정 완료!!!!!!!!!");
+			rttr.addAttribute("m_id", m_id);
+			rttr.addAttribute("b_kind", b_kind);
+			rttr.addAttribute("b_no", b_no);
+//			return "redirect:HJBoard";
+			return "redirect:HJBoardDetail";
+		}else {
+			model.addAttribute("msg","수정 실패 확인해 보세요");
+			return "forward:HJBoardmodifyForm";
+		}
 	}	
 	
+	// 게시글 답변글 작성
 	@RequestMapping("/HJboardReply_view")
 	public String boardReply_view(Board board, Model model) {
 		logger.info("boardReply_view start");
@@ -321,9 +332,20 @@ public class HJController {
 	}
 	
 	@RequestMapping("/HJboardReply")
-	public String boardReply(Board board, Model model) {
+	public String boardReply(HttpServletRequest request, MultipartFile filename, Board board, Model model) throws Exception {
 		logger.info("boardReply start");
 		
+		String b_filename = board.getB_filename();
+		System.out.println("HJController Boardmodify b_filename->" + b_filename);
+		
+		// 파일 업로드
+		if(b_filename != null) {
+		String uploadPath = request.getSession().getServletContext().getRealPath("/resources/image/board");
+		String savedName = uploadFile(filename.getOriginalFilename(), filename.getBytes(), uploadPath);
+		logger.info("savedName : " + savedName);
+		board.setB_filename(savedName);
+		System.out.println("HJController Boardmodify board.getB_lock()->" + board.getB_lock());
+		}
 		
 		return "forward:HJBoard";
 	}
