@@ -42,6 +42,14 @@ public interface HJDao {
 
 	int Boardmodify(Board board);
 
+	int updateReply(Board board);
+
+	int insertReply(Board board);
+
+	int commentInsert(Board board);
+
+	List<Board> getComList(Board board);
+
 
 
 }

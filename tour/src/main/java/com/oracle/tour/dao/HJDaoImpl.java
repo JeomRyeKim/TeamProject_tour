@@ -139,6 +139,7 @@ public class HJDaoImpl implements HJDao {
 	@Override
 	public int insert(Board board) {
 		System.out.println("HJDaoImpl insert Start....");
+		System.out.println("HJDaoImpl insert board.getB_filename()->" + board.getB_filename());
 		int result = 0;
 		try {
 			result = session.insert("hjBoardInsert", board);
@@ -188,7 +189,7 @@ public class HJDaoImpl implements HJDao {
 		}
 		return BLikeChk_n;
 	}
-	// 좋아요를 처음 누를 때 'y'으로 insert
+	// 좋아요를 처음 누를 때 b_like_check = "y"으로 insert
 	@Override
 	public int insert_bl(Board_like board_like) {
 		System.out.println("HJDaoImpl insert_bl Start....");
@@ -292,6 +293,66 @@ public class HJDaoImpl implements HJDao {
 			System.out.println("HJDaoImpl Boardmodify Exception->" + e.getMessage());
 		}
 		return modifyChk;
+	}
+	
+	// 새로 입력하는 댓글이 기존의 댓글과 b_Group =같고   &  기존의 댓글보다 b_Step >작으면  =>  b_Step + 1
+	@Override
+	public int updateReply(Board board) {
+		System.out.println("HJDaoImpl updateReply Start....");
+		System.out.println("HJDaoImpl updateReply board.getB_Group()->" + board.getB_Group());
+		System.out.println("HJDaoImpl updateReply board.getB_Step()->" + board.getB_Step());
+		System.out.println("HJDaoImpl updateReply board.getB_Indent()->" + board.getB_Indent());
+		int replyShapeChk = 0;
+		try {
+			replyShapeChk = session.update("hjUpdateReply", board);
+			System.out.println("HJDaoImpl updateReply replyShapeChk->" + replyShapeChk);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl updateReply Exception->" + e.getMessage());
+		}
+		return replyShapeChk;
+	}
+	// 답변 입력
+	@Override
+	public int insertReply(Board board) {
+		System.out.println("HJDaoImpl insertReply Start....");
+		System.out.println("HJDaoImpl insertReply board.getB_Group()->" + board.getB_Group());
+		System.out.println("HJDaoImpl insertReply board.getB_Step()->" + board.getB_Step());
+		System.out.println("HJDaoImpl insertReply board.getB_Indent()->" + board.getB_Indent());
+		int insertReplyChk = 0;
+		try {
+			insertReplyChk = session.insert("hjInsertReplyChk", board);
+			System.out.println("HJDaoImpl updateReply insertReplyChk->" + insertReplyChk);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl insertReply Exception->" + e.getMessage());
+		}
+		return insertReplyChk;
+	}
+	
+	// 게시글 댓글 입력
+	@Override
+	public int commentInsert(Board board) {
+		System.out.println("HJDaoImpl commentInsert Start....");
+		int getComment = 0;
+		try {
+			getComment =session.insert("hjCommentInsert", board);
+			System.out.println("HJDaoImpl commentInsert getComment->" + getComment);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl commentInsert Exception->" + e.getMessage());
+		}
+		return getComment;
+	}
+	// 게시글 목록 가져오기
+	@Override
+	public List<Board> getComList(Board board) {
+		System.out.println("HJDaoImpl getComList Start....");
+		List<Board> commentList = null;
+		try {
+			commentList = session.selectList("hjGetComList", board);
+			System.out.println("HJDaoImpl getComList commentList.size()->" + commentList.size());
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl getComList Exception->" + e.getMessage());
+		}
+		return commentList;
 	}
 
 	

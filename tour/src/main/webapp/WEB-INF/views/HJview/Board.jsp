@@ -2,9 +2,9 @@
     pageEncoding="UTF-8"%>
 <%@include file="boot.jsp" %> 
 <!DOCTYPE html>
-<%-- <% --%>
-<!--  	String context = request.getContextPath(); -->
-<%-- %> --%>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -117,27 +117,40 @@ function writeCheck(){
 	        	<td><b style="color: red;">[공지사항]</b></td>
 	          </c:if>
 	        <td>${board.b_no}</td>
-	        <!-- when 비밀글O, 로그인X -->
-			<!-- when 비밀글O, 본인글X, 관리자X -->
-			<!-- when 비밀글O, 본인글O, 관리자X -->
-			<!-- when 비밀글O, 본인글X, 관리자O -->
-	        <c:choose>
-	        	<c:when test='${board.b_lock == "y" && member.m_id == null}'>
-	        		<td>비밀글입니다. 작성자와 관리자만 확인 가능합니다.</td>
-	        	</c:when>
-	        	<c:when test='${board.b_lock == "y" && board.m_id != member.m_id && member.m_kind != "2"}'>
-	        		<td>비밀글입니다. 작성자와 관리자만 확인 가능합니다.</td>
-	        	</c:when>
-	        	<c:when test='${board.b_lock == "y" && board.m_id == member.m_id && member.m_kind != "2"}'>
-	        		<td><a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}">${board.b_title}</td>
-	        	</c:when>
-	        	<c:when test='${board.b_lock == "y" && board.m_id != member.m_id && member.m_kind == "2"}'>
-		        	<td><a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}">${board.b_title}</td>
-	        	</c:when>
-	        	<c:otherwise>
-		        	<td><a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}">${board.b_title}</td>
-	        	</c:otherwise>
-	        </c:choose>
+	        <td>
+		        <!-- when 비밀글O, 로그인X -->
+				<!-- when 비밀글O, 본인글X, 관리자X -->
+				<!-- when 비밀글O, 본인글O, 관리자X -->
+				<!-- when 비밀글O, 본인글X, 관리자O -->
+				<c:forEach begin="1" end="${board.b_Indent}">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">
+					  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>
+					</svg>
+				</c:forEach>
+				<c:if test="${board.b_lock == 'y'}">
+					🔒			   
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16">
+					  <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+				    </svg> 
+				</c:if>
+		        <c:choose>
+		        	<c:when test='${board.b_lock == "y" && member.m_id == null}'>
+		        		비밀글입니다. 작성자와 관리자만 확인 가능합니다.
+		        	</c:when>
+		        	<c:when test='${board.b_lock == "y" && board.m_id != member.m_id && member.m_kind != "2"}'>
+		        		비밀글입니다. 작성자와 관리자만 확인 가능합니다.
+		        	</c:when>
+		        	<c:when test='${board.b_lock == "y" && board.m_id == member.m_id && member.m_kind != "2"}'>
+		        		<a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}&m_nickname=${member.m_nickname}">${board.b_title}
+		        	</c:when>
+		        	<c:when test='${board.b_lock == "y" && board.m_id != member.m_id && member.m_kind == "2"}'>
+			        	<a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}&m_nickname=${member.m_nickname}">${board.b_title}
+		        	</c:when>
+		        	<c:otherwise>
+			        	<a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}&m_nickname=${member.m_nickname}">${board.b_title}
+		        	</c:otherwise>
+		        </c:choose>
+	        </td>
 	        <td>${board.m_nickname}</td>
 	        <td>${board.b_date}</td>
 	        <td>

@@ -205,8 +205,11 @@
 	<!-- 새글 입력 -->
 	<insert id="hjBoardInsert" parameterType="Board">
 		insert into board values(#{b_kind}, b_no_seq.nextval, #{m_id}, #{b_title}, #{b_contents}, sysdate, 0,
-								 <if test="b_filename!=null"> #{b_filename},</if>
-								 null, b_no_seq.currval, 0, 0, #{b_notice}, #{b_lock}, 0)
+								 <choose>
+									<when test="b_filename != null"> #{b_filename},</when>
+								 	<otherwise> null,</otherwise>
+								 </choose>
+								 b_no_seq.currval, 0, 0, #{b_notice}, #{b_lock}, 0)
 	</insert>
 	
 	<!-- 게시글 삭제 -->
@@ -232,7 +235,7 @@
 		and m_id = #{m_id}
 		and b_like_check = 'n'
 	</select>
-	<!-- 좋아요를 처음 누를 때 'n'으로 일단 insert -->
+	<!-- 좋아요를 처음 누를 때 b_like_check = "y"으로 insert -->
 	<insert id="hjinsert_bl" parameterType="Board_like">
 		insert into board_like values(#{b_kind}, #{b_no}, #{m_id}, 'y')
 	</insert>
@@ -290,4 +293,34 @@
 		where b_no = #{b_no}
 		and m_id = #{m_id}
 	</update>
+	
+	<!-- 새로 입력하는 댓글이 기존의 댓글과 b_Group =같고   &  기존의 댓글보다 b_Step >작으면  =>  b_Step + 1 -->
+	<update id="hjUpdateReply" parameterType="Board">
+		update board 
+		set b_Step = b_Step + 1 
+		where b_Group = #{b_Group} 
+		and b_Step > #{b_Step}
+	</update>
+	<!-- 답변 입력 -->
+	<insert id="hjInsertReplyChk" parameterType="Board">
+		insert into board values(#{b_kind}, b_no_seq.nextval, #{m_id}, #{b_title}, #{b_contents}, sysdate, 0,
+								 <choose>
+									<when test="b_filename != null"> #{b_filename},</when>
+								 	<otherwise> null,</otherwise>
+								 </choose>
+								 #{b_Group}, #{b_Step}, #{b_Indent}, #{b_notice}, #{b_lock}, 0)
+	</insert>
+	
+	<!-- 게시글 댓글 입력 -->
+	<insert id="hjCommentInsert" parameterType="Board">
+		insert into board(b_kind, b_no, m_id, b_contents, b_date, b_Group, b_Step, b_Indent, b_lock)
+		values('5', b_no_seq.nextval, #{m_id}, #{c_contents}, sysdate, b_no_seq.currval, 0, 0, #{c_lock})
+	</insert>
+	<!-- 게시글 목록 가져오기 -->
+	<select id="hjGetComList" parameterType="Board" resultType="Board">
+		select *
+		from board
+		where b_kind = '5'
+		and b_no = #{b_no}
+	</select>
 </mapper>

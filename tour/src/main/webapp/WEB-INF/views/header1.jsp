@@ -36,22 +36,14 @@
 							<%--       </c:when> --%> <%-- 	  <c:otherwise>    --%>
 						<li class="nav-item"><a class="nav-link" href="memberLogout">로그아웃</a></li>
 						<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" role="button"
-							data-bs-toggle="dropdown">마이페이지</a>
+						<a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="true">마이페이지</a>
 							<ul class="dropdown-menu">
 								<li><a class="dropdown-item" href="myInfo?m_id=${sessionScope.m_id}">나의 정보</a></li>
 								<li><a class="dropdown-item" href="myWishList">나의 찜 목록</a></li>
 							</ul></li>
 						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/planL?id=${sessionScope.m_id}&active=${sessionScope.m_active_kind}">플래너</a>
 						</li>
-<%-- 						<c:choose> --%>
-<%-- 							<c:when test="${not empty sessionScope.m_id}"> --%>
-								<li class="nav-item"><a class="nav-link" href="HJBoard?m_id=${sessionScope.m_id}">게시판</a></li>
-<%-- 							</c:when> --%>
-<%-- 							<c:otherwise> --%>
-<!-- 								<li class="nav-item"><a class="nav-link" href="/HJBoard">게시판</a></li> -->
-<%-- 							</c:otherwise> --%>
-<%-- 						</c:choose> --%>
+							<li class="nav-item"><a class="nav-link" href="HJBoard?m_id=${sessionScope.m_id}">게시판</a></li>
 					</ul>
 				</div>
 			</div>

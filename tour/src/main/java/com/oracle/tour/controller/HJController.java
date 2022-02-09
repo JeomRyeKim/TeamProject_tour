@@ -17,10 +17,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.oracle.tour.dto.Board;
@@ -69,7 +67,6 @@ public class HJController {
 		model.addAttribute("listBoard", listBoard);
 		model.addAttribute("pg", pg);
 		model.addAttribute("total", total);
-		model.addAttribute("radioButton", "a");
 		
 		System.out.println("!StringUtils.isEmpty(m_id)->" + !StringUtils.isEmpty(m_id)); // false
 		
@@ -82,7 +79,6 @@ public class HJController {
 			System.out.println("HJController BoardList getMemberDetail member.getM_kind()->" + member.getM_kind());
 			model.addAttribute("member", member);
 		}
-		
 		return "HJview/Board";
 	}
 	
@@ -202,31 +198,32 @@ public class HJController {
 	public String Write(HttpServletRequest request, MultipartFile filename, Board board, Model model) throws Exception {
 		logger.info("Write start");
 		System.out.println("HJController Write start");
+		System.out.println("HJController Write OriginalFilename : " + filename.getOriginalFilename());
+		System.out.println("HJController Write Size : " + filename.getSize());
+		System.out.println("HJController Write ContentType : " + filename.getContentType());
 		
-		String b_filename = board.getB_filename();
+		String b_filename = filename.getOriginalFilename();
 		System.out.println("HJController Write b_filename->" + b_filename);
 		
 		// 파일 업로드
 		if(b_filename != null) {
 			String uploadPath = request.getSession().getServletContext().getRealPath("/resources/image/board");
 			System.out.println("Write POST start");
-			logger.info("OriginalFilename : " + filename.getOriginalFilename());
-			logger.info("Size : " + filename.getSize());
-			logger.info("ContentType : " + filename.getContentType());
-			logger.info("uploadPath : " + uploadPath);
+			System.out.println("HJController Write uploadPath : " + uploadPath);
 			
 			String savedName = uploadFile(filename.getOriginalFilename(), filename.getBytes(), uploadPath);
-			logger.info("savedName : " + savedName);
+			System.out.println("HJController Write savedName : " + savedName);
 			board.setB_filename(savedName);
+			System.out.println("HJController Write set 후에  board.getB_filename(savedName)->" + board.getB_filename());
 			System.out.println("HJController Write board.getB_lock()->" + board.getB_lock());
 		}
 			
 			System.out.println("***********HJController Write insert");
 			int result = hs.insert(board); // 성공시 1, 실패시 0
 			System.out.println("HJController Write insert result->" + result);
-			System.out.println("board.getB_notice()->" + board.getB_notice());
-			System.out.println("board.getB_filename()->" + board.getB_filename());
-			System.out.println("board.getM_nickname()->" + board.getM_nickname());
+			System.out.println("HJController Write board.getB_notice()->" + board.getB_notice());
+			System.out.println("HJController Write board.getB_filename()->" + board.getB_filename());
+			System.out.println("HJController Write board.getM_nickname()->" + board.getM_nickname());
 		// 업데이트 성공시
 		if (result > 0) {
 			System.out.println("새글 등록 완료!!!!!!!!!");
@@ -283,7 +280,7 @@ public class HJController {
 		System.out.println("HJController Boardmodify board.getM_id()->" + board.getM_id());
 		System.out.println("HJController Boardmodify board.getM_nickname()->" + board.getM_nickname());
 		
-		String b_filename = board.getB_filename();
+		String b_filename = filename.getOriginalFilename();
 		System.out.println("HJController Boardmodify b_filename->" + b_filename);
 		
 		// 파일 업로드
@@ -325,18 +322,19 @@ public class HJController {
 		
 		Board boardDetail = hs.BoardDetail(board); 
 		System.out.println("HJController boardReply_view boardDetail.getB_title()->" + boardDetail.getB_title());
-		System.out.println("HJController boardReply_view boardDetail.getM_kind()->" + boardDetail.getM_kind());
+		System.out.println("HJController boardReply_view boardDetail.getB_kind()->" + boardDetail.getB_kind());
+		System.out.println("HJController boardReply_view boardDetail.getB_no()->" + boardDetail.getB_no());
+		System.out.println("HJController boardReply_view boardDetail.getB_Group()->" + boardDetail.getB_Group());
 		model.addAttribute("boardDetail", boardDetail);
 		
 		return "HJview/boardReply";
 	}
-	
 	@RequestMapping("/HJboardReply")
 	public String boardReply(HttpServletRequest request, MultipartFile filename, Board board, Model model) throws Exception {
 		logger.info("boardReply start");
 		
-		String b_filename = board.getB_filename();
-		System.out.println("HJController Boardmodify b_filename->" + b_filename);
+		String b_filename = filename.getOriginalFilename();
+		System.out.println("HJController boardReply b_filename->" + b_filename);
 		
 		// 파일 업로드
 		if(b_filename != null) {
@@ -344,10 +342,84 @@ public class HJController {
 		String savedName = uploadFile(filename.getOriginalFilename(), filename.getBytes(), uploadPath);
 		logger.info("savedName : " + savedName);
 		board.setB_filename(savedName);
-		System.out.println("HJController Boardmodify board.getB_lock()->" + board.getB_lock());
+		System.out.println("HJController boardReply board.getB_lock()->" + board.getB_lock());
 		}
 		
-		return "forward:HJBoard";
+		// 새로 입력하는 댓글이 기존의 댓글과 b_Group =같고   &  기존의 댓글보다 b_Step >작으면  =>  b_Step + 1
+		System.out.println("HJController boardReply board.getB_Group()->" + board.getB_Group());
+		System.out.println("HJController boardReply board.getB_Step()->" + board.getB_Step());
+		System.out.println("HJController boardReply board.getB_Indent()->" + board.getB_Indent());
+		int replyShapeChk = hs.updateReply(board);
+		System.out.println("HJController boardReply 기존글 b_Step + 1 - replyShapeChk->" + replyShapeChk);
+		
+		// 답변 입력
+		board.setB_Step(board.getB_Step() + 1);
+		System.out.println("HJController boardReply board.setB_Step(board.getB_Step() + 1) 후에 board.getB_Step()->" + board.getB_Step());
+		board.setB_Indent(board.getB_Indent() + 1);
+		System.out.println("HJController boardReply board.setB_Step(board.setB_Indent() + 1) 후에 board.getB_Indent()->" + board.getB_Indent());
+		int insertReplyChk = hs.insertReply(board);
+		System.out.println("HJController boardReply insertReplyChk->" + insertReplyChk);
+		
+		String m_id = board.getM_id();
+		System.out.println("로그인 했다면 HJController boardReply m_id->" + m_id);
+		int b_kind = board.getB_kind();
+		System.out.println("로그인 했다면 HJController boardReply b_kind->" + b_kind);
+		int b_no = board.getB_no();
+		System.out.println("로그인 했다면 HJController boardReply b_no->" + b_no);
+		// 답변글 입력 성공시
+		if (insertReplyChk > 0) {
+			System.out.println("게시글 답변 입력 완료~~~~~~~~~~~~~~~");
+			return "redirect:HJBoard";
+		}else {
+			model.addAttribute("msg","답변글 입력 실패 확인해 보세요");
+			return "forward:HJboardReply_view";
+		}
+	}
+	
+	// 게시글 댓글 입력
+	@RequestMapping("/HJCommentInsert")
+	public String CommentInsert(Board board, Model model) {
+		System.out.println("HJController CommentInsert start");
+		System.out.println("HJController CommentInsert board.getC_no()->" + board.getC_no());
+		System.out.println("HJController CommentInsert board.getM_id()->" + board.getM_id());
+		System.out.println("HJController CommentInsert board.getC_nickname()->" + board.getC_nickname());
+		System.out.println("HJController CommentInsert board.getC_contents()->" + board.getC_contents());
+		System.out.println("HJController CommentInsert board.getC_lock()->" + board.getC_lock());
+		int getComment = hs.commentInsert(board);
+		System.out.println("HJController CommentInsert getComment->" + getComment);
+		System.out.println("HJController CommentInsert board.getB_no()->" + board.getB_no());
+		JSONObject obj = new JSONObject();
+
+		obj.put("c_no", board.getC_no());		
+		obj.put("b_no", board.getB_no());		
+		obj.put("c_nickname", board.getC_nickname());		
+		obj.put("c_contents", board.getC_contents());				
+		obj.put("b_date", board.getB_date());			
+		obj.put("c_lock", board.getC_lock());			
+		
+		return obj.toJSONString();
+		
+//		String getCommentStr = Integer.toString(getComment);
+//		
+//		return getCommentStr;
+	}
+	// 게시글 목록 가져오기
+	@RequestMapping("/HJCommentList")
+	public List<Board> CommentList(Board board, Model model) {
+		System.out.println("HJController CommentList start");
+		System.out.println("HJController CommentList board.getB_no()->" + board.getB_no());
+		List<Board> commentList = hs.getComList(board);
+		System.out.println("HJController CommentList commentList.size()->" + commentList.size());
+		System.out.println("HJController CommentList board.getM_id()->" + board.getM_id());
+		System.out.println("HJController CommentList board.getC_no()->" + board.getC_no());
+		System.out.println("HJController CommentList board.getC_nickname()->" + board.getC_nickname());
+		System.out.println("HJController CommentList board.getC_contents()->" + board.getC_contents());
+		System.out.println("HJController CommentList board.getC_lock()->" + board.getC_lock());
+		System.out.println("HJController CommentList board.getM_nickname()->" + board.getM_nickname());
+		System.out.println("HJController CommentList board.getB_contents()->" + board.getB_contents());
+		System.out.println("HJController CommentList board.getB_lock()->" + board.getB_lock());
+		
+		return commentList;
 	}
 	
 	

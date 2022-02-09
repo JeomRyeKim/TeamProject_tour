@@ -159,6 +159,38 @@ public class HJServiceImpl implements HJService {
 		return modifyChk;
 	}
 
+	@Override
+	public int updateReply(Board board) {
+		System.out.println("HJServiceImpl updateReply start..");
+		int replyShapeChk = hd.updateReply(board);
+		
+		return replyShapeChk;
+	}
+
+	@Override
+	public int insertReply(Board board) {
+		System.out.println("HJServiceImpl insertReply start..");
+		int insertReplyChk = hd.insertReply(board);
+		
+		return insertReplyChk;
+	}
+
+	@Override
+	public int commentInsert(Board board) {
+		System.out.println("HJServiceImpl commentInsert start..");
+		int getComment = hd.commentInsert(board);
+		
+		return getComment;
+	}
+
+	@Override
+	public List<Board> getComList(Board board) {
+		System.out.println("HJServiceImpl getComList start..");
+		List<Board> commentList = hd.getComList(board);
+		
+		return commentList;
+	}
+
 
 
 
