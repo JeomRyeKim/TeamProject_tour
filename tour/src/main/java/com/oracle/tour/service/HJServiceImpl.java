@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.oracle.tour.dao.HJDao;
 import com.oracle.tour.dto.Board;
+import com.oracle.tour.dto.Board_comment;
 import com.oracle.tour.dto.Board_like;
 import com.oracle.tour.dto.Member;
 
@@ -176,20 +177,69 @@ public class HJServiceImpl implements HJService {
 	}
 
 	@Override
-	public int commentInsert(Board board) {
+	public int commentInsert(Board_comment board_comment) {
 		System.out.println("HJServiceImpl commentInsert start..");
-		int getComment = hd.commentInsert(board);
+		int getCommentChk = hd.commentInsert(board_comment);
 		
-		return getComment;
+		return getCommentChk;
 	}
 
 	@Override
-	public List<Board> getComList(Board board) {
+	public int getBoardComCntUpdate(Board_comment board_comment) {
+		System.out.println("HJServiceImpl getBoardComCntUpdate start..");
+		int boardComCntUpdate = hd.getBoardComCntUpdate(board_comment);
+		
+		return boardComCntUpdate;
+	}
+	
+	@Override
+	public List<Board> getComList(Board_comment board_comment) {
 		System.out.println("HJServiceImpl getComList start..");
-		List<Board> commentList = hd.getComList(board);
+		List<Board> commentList = hd.getComList(board_comment);
 		
 		return commentList;
 	}
+
+	@Override
+	public int getCommentCnt(Board_comment board_comment) {
+		System.out.println("HJServiceImpl getCommentCnt start..");
+		int commentCnt = hd.getCommentCnt(board_comment);
+		
+		return commentCnt;
+	}
+	
+	@Override
+	public int commentUpdate(Board_comment board_comment) {
+		System.out.println("HJServiceImpl commentUpdate start..");
+		int commentUpdateChk = hd.commentUpdate(board_comment);
+		
+		return commentUpdateChk;
+	}
+
+	@Override
+	public List<Board_comment> getModifyComList(Board_comment board_comment) {
+		System.out.println("HJServiceImpl getModifyComList start..");
+		List<Board_comment> BCModifyComList = hd.getModifyComList(board_comment);
+		
+		return BCModifyComList;
+	}
+
+	@Override
+	public int commnetDelete(Board_comment board_comment) {
+		System.out.println("HJServiceImpl commnetDelete start..");
+		int commentDelChk = hd.commnetDelete(board_comment);
+		
+		return commentDelChk;
+	}
+
+	@Override
+	public int getBoardComCntDelete(Board_comment board_comment) {
+		System.out.println("HJServiceImpl getBoardComCntDelete start..");
+		int boardComCntDelete = hd.getBoardComCntDelete(board_comment);
+		
+		return boardComCntDelete;
+	}
+
 
 
 

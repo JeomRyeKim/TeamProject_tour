@@ -3,6 +3,7 @@ package com.oracle.tour.service;
 import java.util.List;
 
 import com.oracle.tour.dto.Board;
+import com.oracle.tour.dto.Board_comment;
 import com.oracle.tour.dto.Board_like;
 import com.oracle.tour.dto.Member;
 
@@ -46,9 +47,22 @@ public interface HJService {
 
 	int insertReply(Board board);
 
-	int commentInsert(Board board);
+	int commentInsert(Board_comment board_comment);
+	
+	int getBoardComCntUpdate(Board_comment board_comment);
 
-	List<Board> getComList(Board board);
+	List<Board> getComList(Board_comment board_comment);
+	
+	int getCommentCnt(Board_comment board_comment);
+
+	int commentUpdate(Board_comment board_comment);
+
+	List<Board_comment> getModifyComList(Board_comment board_comment);
+
+	int commnetDelete(Board_comment board_comment);
+
+	int getBoardComCntDelete(Board_comment board_comment);
+
 	
 
 }

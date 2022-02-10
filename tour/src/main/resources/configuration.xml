@@ -4,6 +4,7 @@
 <configuration>
 	<typeAliases>
 		<typeAlias alias="Board" type="com.oracle.tour.dto.Board"/>
+		<typeAlias alias="Board_comment" type="com.oracle.tour.dto.Board_comment"/>
 		<typeAlias alias="Board_like" type="com.oracle.tour.dto.Board_like"/>
 		<typeAlias alias="Command" type="com.oracle.tour.dto.Command"/>
 		<typeAlias alias="Contents_like" type="com.oracle.tour.dto.Contents_like"/>

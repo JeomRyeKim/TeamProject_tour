@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.oracle.tour.dto.Board;
+import com.oracle.tour.dto.Board_comment;
 import com.oracle.tour.dto.Board_like;
 import com.oracle.tour.dto.Member;
 import com.oracle.tour.service.HJService;
@@ -38,8 +39,7 @@ public class HJController {
 	// 게시판 들어갈 때 검색, 페이징처리
 	@RequestMapping("/HJBoard")
 	public String BoardList(Board board, String searchType, String keyword, 
-							String currentPage, Model model, Member member, String m_id, 
-							HttpServletRequest request) {
+							String currentPage, Model model, Member member, String m_id) {
 		logger.info("BoardList start");
 		
 		System.out.println("로그인을 한 상태라면 출력값이 있을 것 - m_id->" + m_id);
@@ -64,9 +64,9 @@ public class HJController {
 		List<Board> listBoard = hs.listBoard(board);
 		System.out.println("HJController BoardList listBoard.size()->" + listBoard.size());
 		
-		model.addAttribute("listBoard", listBoard);
-		model.addAttribute("pg", pg);
 		model.addAttribute("total", total);
+		model.addAttribute("pg", pg);
+		model.addAttribute("listBoard", listBoard);
 		
 		System.out.println("!StringUtils.isEmpty(m_id)->" + !StringUtils.isEmpty(m_id)); // false
 		
@@ -188,7 +188,7 @@ public class HJController {
 	
 	// 게시글 작성
 	@GetMapping("/HJWriteForm")
-	public String WriteForm(Board board, Model model) {
+	public String WriteForm(Board board) {
 		logger.info("WriteForm start");
 		System.out.println("HJController WriteForm start");
 		
@@ -250,7 +250,7 @@ public class HJController {
 	
 	// 게시글 삭제
 	@RequestMapping(value = "/HJBoardDelete")
-	public String BoardDelete(Board board, Model model) {
+	public String BoardDelete(Board board) {
 		logger.info("BoardDelete start");
 		int boardDelete = hs.BoardDelete(board);
 		System.out.println("HJController BoardDelete boardDelete->" + boardDelete);
@@ -377,49 +377,87 @@ public class HJController {
 	}
 	
 	// 게시글 댓글 입력
-	@RequestMapping("/HJCommentInsert")
-	public String CommentInsert(Board board, Model model) {
+	@RequestMapping(value = "/HJCommentInsert", produces = "application/text; charset=UTF-8")
+	@ResponseBody
+	public String CommentInsert(Board_comment board_comment) {
 		System.out.println("HJController CommentInsert start");
-		System.out.println("HJController CommentInsert board.getC_no()->" + board.getC_no());
-		System.out.println("HJController CommentInsert board.getM_id()->" + board.getM_id());
-		System.out.println("HJController CommentInsert board.getC_nickname()->" + board.getC_nickname());
-		System.out.println("HJController CommentInsert board.getC_contents()->" + board.getC_contents());
-		System.out.println("HJController CommentInsert board.getC_lock()->" + board.getC_lock());
-		int getComment = hs.commentInsert(board);
-		System.out.println("HJController CommentInsert getComment->" + getComment);
-		System.out.println("HJController CommentInsert board.getB_no()->" + board.getB_no());
-		JSONObject obj = new JSONObject();
+		System.out.println("HJController CommentInsert board_comment.getB_kind()->" + board_comment.getB_kind());
+		System.out.println("HJController CommentInsert board_comment.getB_no()->" + board_comment.getB_no());
+		System.out.println("HJController CommentInsert board_comment.getM_id()->" + board_comment.getM_id());
+		System.out.println("HJController CommentInsert board_comment.getBc_Group()->" + board_comment.getBc_Group());
+		System.out.println("HJController CommentInsert board_comment.getBc_lock()->" + board_comment.getBc_lock());
+		// 댓글 입력
+		int getCommentChk = hs.commentInsert(board_comment);
+		System.out.println("HJController CommentInsert getCommentChk->" + getCommentChk);
+		int bc_no = board_comment.getBc_no();
+		System.out.println("HJController CommentInsert insert이후에 bc_no->" + bc_no);
+		
+		// 게시판에 댓글 개수 +1 해주기
+		int boardComCntUpdate = hs.getBoardComCntUpdate(board_comment);
+		System.out.println("HJController CommentInsert boardComCntUpdate->" + boardComCntUpdate);
 
-		obj.put("c_no", board.getC_no());		
-		obj.put("b_no", board.getB_no());		
-		obj.put("c_nickname", board.getC_nickname());		
-		obj.put("c_contents", board.getC_contents());				
-		obj.put("b_date", board.getB_date());			
-		obj.put("c_lock", board.getC_lock());			
-		
-		return obj.toJSONString();
-		
-//		String getCommentStr = Integer.toString(getComment);
-//		
-//		return getCommentStr;
+		String getCommentStr = Integer.toString(getCommentChk);
+		return getCommentStr;
 	}
-	// 게시글 목록 가져오기
-	@RequestMapping("/HJCommentList")
-	public List<Board> CommentList(Board board, Model model) {
+	// 게시글 댓글 목록 가져오기
+	@RequestMapping(value = "/HJCommentList")
+	@ResponseBody
+	public List<Board> CommentList(Board_comment board_comment) {
 		System.out.println("HJController CommentList start");
-		System.out.println("HJController CommentList board.getB_no()->" + board.getB_no());
-		List<Board> commentList = hs.getComList(board);
+		System.out.println("HJController CommentList board_comment.getB_kind()->" + board_comment.getB_kind());
+		System.out.println("HJController CommentList board_comment.getB_no()->" + board_comment.getB_no());
+		System.out.println("HJController CommentList board_comment.getBc_no()->" + board_comment.getBc_no());
+		System.out.println("HJController CommentList board_comment.getM_id()->" + board_comment.getM_id());
+		List<Board> commentList = hs.getComList(board_comment);
 		System.out.println("HJController CommentList commentList.size()->" + commentList.size());
-		System.out.println("HJController CommentList board.getM_id()->" + board.getM_id());
-		System.out.println("HJController CommentList board.getC_no()->" + board.getC_no());
-		System.out.println("HJController CommentList board.getC_nickname()->" + board.getC_nickname());
-		System.out.println("HJController CommentList board.getC_contents()->" + board.getC_contents());
-		System.out.println("HJController CommentList board.getC_lock()->" + board.getC_lock());
-		System.out.println("HJController CommentList board.getM_nickname()->" + board.getM_nickname());
-		System.out.println("HJController CommentList board.getB_contents()->" + board.getB_contents());
-		System.out.println("HJController CommentList board.getB_lock()->" + board.getB_lock());
 		
 		return commentList;
+	}
+	// 해당 게시글 댓글 개수 가져오기
+	@RequestMapping(value = "/HJCommentCnt")
+	@ResponseBody
+	public String CommentCnt(Board_comment board_comment) {
+		System.out.println("HJController CommentCnt start");
+		int commentCnt = hs.getCommentCnt(board_comment);
+		System.out.println("HJController CommentList commentCnt->" + commentCnt);
+		
+		String commentCntStr = Integer.toString(commentCnt);
+		return commentCntStr;
+	}
+	// 댓글 수정
+	@RequestMapping(value = "HJCommentUpdate", produces = "application/text; charset=UTF-8")
+	@ResponseBody
+	public List<Board_comment> CommentUpdate(Board_comment board_comment) {
+		System.out.println("HJController CommentUpdate start");
+		System.out.println("HJController CommentUpdate board_comment.getBc_lock()->" + board_comment.getBc_lock());
+		int commentUpdateChk = hs.commentUpdate(board_comment);
+		System.out.println("HJController CommentUpdate commentUpdateChk->" + commentUpdateChk);
+		System.out.println("HJController CommentUpdate board_comment.getB_kind()->" + board_comment.getB_kind());
+		System.out.println("HJController CommentUpdate board_comment.getB_no()->" + board_comment.getB_no());
+		System.out.println("HJController CommentUpdate board_comment.getBc_contents()->" + board_comment.getBc_contents());
+		System.out.println("HJController CommentUpdate board_comment.getBc_no()->" + board_comment.getBc_no());
+		
+		// 수정한 댓글 내용 view로 보내기
+		List<Board_comment> BCModifyComList = hs.getModifyComList(board_comment);
+		System.out.println("HJController CommentUpdate BCModifyComList.size()->" + BCModifyComList.size());
+		System.out.println("HJController CommentUpdate board_comment.getBc_lock()->" + board_comment.getBc_lock());
+		
+		return BCModifyComList;
+	}
+	// 댓글 삭제
+	@RequestMapping(value = "HJCommentDelete")
+	@ResponseBody
+	public String CommentDelete(Board_comment board_comment) {
+		System.out.println("HJController CommentDelete start");
+		System.out.println("HJController CommentDelete board_comment.getBc_no()->" + board_comment.getBc_no());
+		int commentDelChk = hs.commnetDelete(board_comment);
+		
+		// 게시판에 댓글 개수 -1 해주기
+		int boardComCntDelete = hs.getBoardComCntDelete(board_comment);
+		System.out.println("HJController CommentInsert boardComCntDelete->" + boardComCntDelete);
+		
+		String commentDelStr = Integer.toString(commentDelChk);
+		return commentDelStr;
 	}
 	
 	

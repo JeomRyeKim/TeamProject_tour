@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.oracle.tour.dto.Board;
+import com.oracle.tour.dto.Board_comment;
 import com.oracle.tour.dto.Board_like;
 import com.oracle.tour.dto.Member;
 
@@ -330,29 +331,105 @@ public class HJDaoImpl implements HJDao {
 	
 	// 게시글 댓글 입력
 	@Override
-	public int commentInsert(Board board) {
+	public int commentInsert(Board_comment board_comment) {
 		System.out.println("HJDaoImpl commentInsert Start....");
-		int getComment = 0;
+		int getCommentChk = 0;
 		try {
-			getComment =session.insert("hjCommentInsert", board);
-			System.out.println("HJDaoImpl commentInsert getComment->" + getComment);
+			getCommentChk =session.insert("hjCommentInsert", board_comment);
+			System.out.println("HJDaoImpl commentInsert getCommentChk->" + getCommentChk);
 		} catch (Exception e) {
 			System.out.println("HJDaoImpl commentInsert Exception->" + e.getMessage());
 		}
-		return getComment;
+		return getCommentChk;
 	}
-	// 게시글 목록 가져오기
+	// 게시판에 댓글 개수 +1하기
 	@Override
-	public List<Board> getComList(Board board) {
+	public int getBoardComCntUpdate(Board_comment board_comment) {
+		System.out.println("HJDaoImpl getBoardComCntUpdate Start....");
+		int boardComCntUpdate = 0;
+		try {
+			boardComCntUpdate = session.update("hjBoardComCntUpdate", board_comment);
+			System.out.println("HJDaoImpl getBoardComCntUpdate boardComCntUpdate->" + boardComCntUpdate);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl getBoardComCntUpdate Exception->" + e.getMessage());
+		}
+		return boardComCntUpdate;
+	}
+	// 게시글 댓글 목록 가져오기
+	@Override
+	public List<Board> getComList(Board_comment board_comment) {
 		System.out.println("HJDaoImpl getComList Start....");
 		List<Board> commentList = null;
 		try {
-			commentList = session.selectList("hjGetComList", board);
+			commentList = session.selectList("hjGetComList", board_comment);
 			System.out.println("HJDaoImpl getComList commentList.size()->" + commentList.size());
 		} catch (Exception e) {
 			System.out.println("HJDaoImpl getComList Exception->" + e.getMessage());
 		}
 		return commentList;
+	}
+	// 해당 게시글 댓글 개수 가져오기
+	@Override
+	public int getCommentCnt(Board_comment board_comment) {
+		System.out.println("HJDaoImpl getCommentCnt Start....");
+		int commentCnt = 0;
+		try {
+			commentCnt = session.selectOne("hjCommentCnt", board_comment);
+			System.out.println("HJDaoImpl getCommentCnt commentCnt->" + commentCnt);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl getCommentCnt Exception->" + e.getMessage());
+		}
+		return commentCnt;
+	}
+	// 댓글 수정
+	@Override
+	public int commentUpdate(Board_comment board_comment) {
+		System.out.println("HJDaoImpl commentUpdate Start....");
+		int commentUpdateChk = 0;
+		try {
+			commentUpdateChk = session.update("hjCommentUpdate", board_comment);
+			System.out.println("HJDaoImpl commentUpdate commentUpdateChk->" + commentUpdateChk);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl commentUpdate Exception->" + e.getMessage());
+		}
+		return commentUpdateChk;
+	}
+	// 수정한 데이터 select
+	@Override
+	public List<Board_comment> getModifyComList(Board_comment board_comment) {
+		System.out.println("HJDaoImpl getModifyComList Start....");
+		List<Board_comment> BCModifyComList = null;
+		try {
+			BCModifyComList = session.selectOne("hjmodifyComList", board_comment);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl getModifyComList Exception->" + e.getMessage());
+		}
+		return BCModifyComList;
+	}
+	// 댓글 삭제
+	@Override
+	public int commnetDelete(Board_comment board_comment) {
+		System.out.println("HJDaoImpl commnetDelete Start....");
+		int commentDelChk = 0;
+		try {
+			commentDelChk = session.delete("hjCommnetDelete", board_comment);
+			System.out.println("HJDaoImpl commnetDelete commentDelChk->" + commentDelChk);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl getModifyComList Exception->" + e.getMessage());
+		}
+		return commentDelChk;
+	}
+	// 게시판에 댓글 개수 -1하기
+	@Override
+	public int getBoardComCntDelete(Board_comment board_comment) {
+		System.out.println("HJDaoImpl getCommentCnt Start....");
+		int boardComCntDelete = 0;
+		try {
+			boardComCntDelete = session.update("hjBoardComCntDelete", board_comment);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl getBoardComCntDelete Exception->" + e.getMessage());
+		}
+		return boardComCntDelete;
 	}
 
 	

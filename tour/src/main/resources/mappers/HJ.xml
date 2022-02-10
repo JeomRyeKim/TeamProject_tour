@@ -312,15 +312,56 @@
 	</insert>
 	
 	<!-- 게시글 댓글 입력 -->
-	<insert id="hjCommentInsert" parameterType="Board">
-		insert into board(b_kind, b_no, m_id, b_contents, b_date, b_Group, b_Step, b_Indent, b_lock)
-		values('5', b_no_seq.nextval, #{m_id}, #{c_contents}, sysdate, b_no_seq.currval, 0, 0, #{c_lock})
+	<insert id="hjCommentInsert" parameterType="Board_comment">
+		insert into board_comment
+		values(#{b_kind}, #{b_no}, #{m_id}, bc_no_seq.nextval, #{bc_contents}, sysdate, bc_no_seq.currval, 0, 0, #{bc_lock})
 	</insert>
 	<!-- 게시글 목록 가져오기 -->
-	<select id="hjGetComList" parameterType="Board" resultType="Board">
-		select *
-		from board
-		where b_kind = '5'
+	<select id="hjGetComList" parameterType="Board_comment" resultType="Board_comment">
+		select bc.*, m.m_nickname, m.m_kind
+		from board_comment bc, member m
+		where bc.m_id = m.m_id 
+		and bc.b_kind = #{b_kind}
+		and bc.b_no = #{b_no}
+		order by bc_no, bc_Group desc, bc_Step asc
+	</select>
+	<!-- 해당 게시글 댓글 개수 가져오기 -->
+	<select id="hjCommentCnt" parameterType="Board_comment" resultType="int">
+		select count(*)
+		from board_comment
+		where b_kind = #{b_kind}
 		and b_no = #{b_no}
 	</select>
+	<!-- 게시판에 댓글 개수 +1 해주기 -->
+	<update id="hjBoardComCntUpdate" parameterType="Board_comment">
+		update board
+		set b_commentCnt = b_commentCnt +1
+		where b_kind = #{b_kind}
+		and b_no = #{b_no}
+	</update>
+	<!-- 댓글 수정 -->
+	<update id="hjCommentUpdate" parameterType="Board_comment">
+		update board_comment
+		set bc_contents = #{bc_contents}, bc_date = sysdate
+		where b_kind = #{b_kind}
+		and b_no = #{b_no}
+		and bc_no = #{bc_no}
+	</update>
+	<!-- 수정한 데이터 select -->
+	<select id="hjmodifyComList" parameterType="Board_comment" resultType="Board_comment">
+		select *
+		from board_comment 
+		where bc_no = #{bc_no}
+	</select>
+	<!-- 댓글 삭제 -->
+	<delete id="hjCommnetDelete" parameterType="Board_comment">
+		delete from board_comment 
+		where bc_no = #{bc_no}
+	</delete>
+	<update id="hjBoardComCntDelete" parameterType="Board_comment">
+		update board
+		set b_commentCnt = b_commentCnt -1
+		where b_kind = #{b_kind}
+		and b_no = #{b_no}
+	</update>
 </mapper>

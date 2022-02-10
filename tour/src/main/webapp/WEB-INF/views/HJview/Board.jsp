@@ -135,19 +135,19 @@ function writeCheck(){
 				</c:if>
 		        <c:choose>
 		        	<c:when test='${board.b_lock == "y" && member.m_id == null}'>
-		        		비밀글입니다. 작성자와 관리자만 확인 가능합니다.
+		        		비밀글입니다. 작성자와 관리자만 확인 가능합니다. (${board.b_commentCnt})
 		        	</c:when>
 		        	<c:when test='${board.b_lock == "y" && board.m_id != member.m_id && member.m_kind != "2"}'>
-		        		비밀글입니다. 작성자와 관리자만 확인 가능합니다.
+		        		비밀글입니다. 작성자와 관리자만 확인 가능합니다. (${board.b_commentCnt})
 		        	</c:when>
 		        	<c:when test='${board.b_lock == "y" && board.m_id == member.m_id && member.m_kind != "2"}'>
-		        		<a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}&m_nickname=${member.m_nickname}">${board.b_title}
+		        		<a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}&m_nickname=${member.m_nickname}&m_kind=${member.m_kind}">${board.b_title} (${board.b_commentCnt})
 		        	</c:when>
 		        	<c:when test='${board.b_lock == "y" && board.m_id != member.m_id && member.m_kind == "2"}'>
-			        	<a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}&m_nickname=${member.m_nickname}">${board.b_title}
+			        	<a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}&m_nickname=${member.m_nickname}&m_kind=${member.m_kind}">${board.b_title} (${board.b_commentCnt})
 		        	</c:when>
 		        	<c:otherwise>
-			        	<a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}&m_nickname=${member.m_nickname}">${board.b_title}
+			        	<a href="HJBoardDetail?b_kind=${board.b_kind}&b_no=${board.b_no}&m_id=${member.m_id}&m_nickname=${member.m_nickname}&m_kind=${member.m_kind}">${board.b_title} (${board.b_commentCnt})
 		        	</c:otherwise>
 		        </c:choose>
 	        </td>
