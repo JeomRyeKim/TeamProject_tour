@@ -400,7 +400,7 @@ public class HJDaoImpl implements HJDao {
 		System.out.println("HJDaoImpl getModifyComList Start....");
 		List<Board_comment> BCModifyComList = null;
 		try {
-			BCModifyComList = session.selectOne("hjmodifyComList", board_comment);
+			BCModifyComList = session.selectList("hjmodifyComList", board_comment);
 		} catch (Exception e) {
 			System.out.println("HJDaoImpl getModifyComList Exception->" + e.getMessage());
 		}
@@ -430,6 +430,32 @@ public class HJDaoImpl implements HJDao {
 			System.out.println("HJDaoImpl getBoardComCntDelete Exception->" + e.getMessage());
 		}
 		return boardComCntDelete;
+	}
+	// 새로 입력하는 댓글이 기존의 댓글과 b_Group =같고   &  기존의 댓글보다 b_Step >작으면  =>  b_Step + 1
+	@Override
+	public int getCommentReply(Board_comment board_comment) {
+		System.out.println("HJDaoImpl getCommentReply Start....");
+		int commentReplyUpChk = 0;
+		try {
+			commentReplyUpChk = session.update("hjGetCommentReply", board_comment);
+			System.out.println("HJDaoImpl getCommentReply commentReplyUpChk->" + commentReplyUpChk);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl getCommentReply Exception->" + e.getMessage());
+		}
+		return commentReplyUpChk;
+	}
+	//대댓글 입력
+	@Override
+	public int commentReplyInsert(Board_comment board_comment) {
+		System.out.println("HJDaoImpl commentReplyInsert Start....");
+		int commentReplyInsertChk = 0;
+		try {
+			commentReplyInsertChk = session.insert("hjCommentReplyInsert", board_comment);
+			System.out.println("HJDaoImpl commentReplyInsert commentReplyInsertChk->" + commentReplyInsertChk);
+		} catch (Exception e) {
+			System.out.println("HJDaoImpl commentReplyInsert Exception->" + e.getMessage());
+		}
+		return commentReplyInsertChk;
 	}
 
 	

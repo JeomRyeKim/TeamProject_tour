@@ -240,6 +240,22 @@ public class HJServiceImpl implements HJService {
 		return boardComCntDelete;
 	}
 
+	@Override
+	public int getCommentReply(Board_comment board_comment) {
+		System.out.println("HJServiceImpl getCommentReply start..");
+		int commentReplyUpChk = hd.getCommentReply(board_comment);
+		
+		return commentReplyUpChk;
+	}
+
+	@Override
+	public int commentReplyInsert(Board_comment board_comment) {
+		System.out.println("HJServiceImpl commentReplyInsert start..");
+		int commentReplyInsertChk = hd.commentReplyInsert(board_comment);
+		
+		return commentReplyInsertChk;
+	}
+
 
 
 

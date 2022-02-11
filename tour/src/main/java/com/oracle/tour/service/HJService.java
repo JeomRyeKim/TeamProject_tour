@@ -63,6 +63,10 @@ public interface HJService {
 
 	int getBoardComCntDelete(Board_comment board_comment);
 
+	int getCommentReply(Board_comment board_comment);
+
+	int commentReplyInsert(Board_comment board_comment);
+
 	
 
 }

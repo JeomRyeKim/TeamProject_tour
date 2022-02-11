@@ -427,7 +427,7 @@ public class HJController {
 	// 댓글 수정
 	@RequestMapping(value = "HJCommentUpdate", produces = "application/text; charset=UTF-8")
 	@ResponseBody
-	public List<Board_comment> CommentUpdate(Board_comment board_comment) {
+	public String CommentUpdate(Board_comment board_comment) {
 		System.out.println("HJController CommentUpdate start");
 		System.out.println("HJController CommentUpdate board_comment.getBc_lock()->" + board_comment.getBc_lock());
 		int commentUpdateChk = hs.commentUpdate(board_comment);
@@ -438,11 +438,13 @@ public class HJController {
 		System.out.println("HJController CommentUpdate board_comment.getBc_no()->" + board_comment.getBc_no());
 		
 		// 수정한 댓글 내용 view로 보내기
-		List<Board_comment> BCModifyComList = hs.getModifyComList(board_comment);
-		System.out.println("HJController CommentUpdate BCModifyComList.size()->" + BCModifyComList.size());
-		System.out.println("HJController CommentUpdate board_comment.getBc_lock()->" + board_comment.getBc_lock());
+//		List<Board_comment> BCModifyComList = hs.getModifyComList(board_comment);
+//		System.out.println("HJController CommentUpdate BCModifyComList.size()->" + BCModifyComList.size());
+//		System.out.println("HJController CommentUpdate board_comment.getBc_lock()->" + board_comment.getBc_lock());
 		
-		return BCModifyComList;
+//		return BCModifyComList;
+		String commentUpStr = Integer.toString(commentUpdateChk);
+		return commentUpStr;
 	}
 	// 댓글 삭제
 	@RequestMapping(value = "HJCommentDelete")
@@ -459,6 +461,48 @@ public class HJController {
 		String commentDelStr = Integer.toString(commentDelChk);
 		return commentDelStr;
 	}
-	
+	// 대댓글 달기
+	@RequestMapping(value = "HJCommentReply", produces = "application/text; charset=UTF-8")
+	@ResponseBody
+	public String CommentReply(Board_comment board_comment, RedirectAttributes rttr, Model model) {
+		System.out.println("HJController CommentReply start");
+		int bc_no = board_comment.getBc_no();
+		int bc_Group = board_comment.getBc_Group();
+		int bc_Step = board_comment.getBc_Step();
+		int bc_Indent = board_comment.getBc_Indent();
+		System.out.println("HJController CommentReply bc_no->" + bc_no);
+		System.out.println("HJController CommentReply bc_Group->" + bc_Group);
+		System.out.println("HJController CommentReply bc_Step->" + bc_Step);
+		System.out.println("HJController CommentReply bc_Indent->" + bc_Indent);
+		System.out.println("HJController CommentReply board_comment.getBc_lock()->" + board_comment.getBc_lock());
+		
+		// 새로 입력하는 댓글이 기존의 댓글과 b_Group =같고   &  기존의 댓글보다 b_Step >작으면  =>  b_Step + 1
+		int commentReplyUpChk = hs.getCommentReply(board_comment);
+		System.out.println("HJController CommentReply commentReplyUpChk->" + commentReplyUpChk);
+		
+		//대댓글 입력
+		board_comment.setBc_Step(board_comment.getBc_Step() + 1);
+		board_comment.setBc_Indent(board_comment.getBc_Indent() + 1);
+		System.out.println("HJController CommentReply bc_Step +1 후->" + board_comment.getBc_Step());
+		System.out.println("HJController CommentReply bc_Indent+1 후->" + board_comment.getBc_Indent());
+		int commentReplyInsertChk = hs.commentReplyInsert(board_comment);
+		System.out.println("HJController CommentReply commentReplyInsertChk->" + commentReplyInsertChk);
+		
+		int b_kind = board_comment.getB_kind();
+		System.out.println("로그인 했다면 HJController CommentReply b_kind->" + b_kind);
+		int b_no = board_comment.getB_no();
+		System.out.println("로그인 했다면 HJController CommentReply b_no->" + b_no);
+		if(commentReplyInsertChk > 0) {
+			System.out.println("대댓글 작성 완료##############");
+			
+			String commentReplyInsertStr = Integer.toString(commentReplyInsertChk);
+			return commentReplyInsertStr;
+		}else {
+			model.addAttribute("msg","대댓글 입력 실패 확인해 보세요");
+			rttr.addAttribute("b_kind", b_kind);
+			rttr.addAttribute("b_no", b_no);
+			return "forward:HJBoardDetail";
+		}
+	}
 	
 }
