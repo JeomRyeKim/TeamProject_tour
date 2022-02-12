@@ -464,7 +464,7 @@ public class HJController {
 	// 대댓글 달기
 	@RequestMapping(value = "HJCommentReply", produces = "application/text; charset=UTF-8")
 	@ResponseBody
-	public String CommentReply(Board_comment board_comment, RedirectAttributes rttr, Model model) {
+	public String CommentReply(Board_comment board_comment) {
 		System.out.println("HJController CommentReply start");
 		int bc_no = board_comment.getBc_no();
 		int bc_Group = board_comment.getBc_Group();
@@ -474,7 +474,13 @@ public class HJController {
 		System.out.println("HJController CommentReply bc_Group->" + bc_Group);
 		System.out.println("HJController CommentReply bc_Step->" + bc_Step);
 		System.out.println("HJController CommentReply bc_Indent->" + bc_Indent);
+		
 		System.out.println("HJController CommentReply board_comment.getBc_lock()->" + board_comment.getBc_lock());
+		String bc_lock = board_comment.getBc_lock();
+		// 대댓글에서 bc_lock값이 없을 때 n으로 넣어주기
+		if(StringUtils.isEmpty(bc_lock)) bc_lock = "n";
+		System.out.println("HJController CommentReply bc_lock에 n 삽입 후 bc_lock->" + bc_lock);
+		board_comment.setBc_lock(bc_lock);
 		
 		// 새로 입력하는 댓글이 기존의 댓글과 b_Group =같고   &  기존의 댓글보다 b_Step >작으면  =>  b_Step + 1
 		int commentReplyUpChk = hs.getCommentReply(board_comment);
@@ -487,22 +493,17 @@ public class HJController {
 		System.out.println("HJController CommentReply bc_Indent+1 후->" + board_comment.getBc_Indent());
 		int commentReplyInsertChk = hs.commentReplyInsert(board_comment);
 		System.out.println("HJController CommentReply commentReplyInsertChk->" + commentReplyInsertChk);
+
 		
-		int b_kind = board_comment.getB_kind();
-		System.out.println("로그인 했다면 HJController CommentReply b_kind->" + b_kind);
-		int b_no = board_comment.getB_no();
-		System.out.println("로그인 했다면 HJController CommentReply b_no->" + b_no);
 		if(commentReplyInsertChk > 0) {
 			System.out.println("대댓글 작성 완료##############");
-			
-			String commentReplyInsertStr = Integer.toString(commentReplyInsertChk);
-			return commentReplyInsertStr;
-		}else {
-			model.addAttribute("msg","대댓글 입력 실패 확인해 보세요");
-			rttr.addAttribute("b_kind", b_kind);
-			rttr.addAttribute("b_no", b_no);
-			return "forward:HJBoardDetail";
+			// 게시판에 댓글 개수 +1 해주기
+			int boardComCntUpdate = hs.getBoardComCntUpdate(board_comment);
+			System.out.println("HJController CommentReply boardComCntUpdate->" + boardComCntUpdate);
 		}
+			
+		String commentReplyInsertStr = Integer.toString(commentReplyInsertChk);
+		return commentReplyInsertStr;
 	}
 	
 }

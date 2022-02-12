@@ -323,7 +323,7 @@
 		where bc.m_id = m.m_id 
 		and bc.b_kind = #{b_kind}
 		and bc.b_no = #{b_no}
-		order by bc_no, bc_Group desc, bc_Step asc
+		order by bc_Group, bc_Step
 	</select>
 	<!-- 해당 게시글 댓글 개수 가져오기 -->
 	<select id="hjCommentCnt" parameterType="Board_comment" resultType="int">

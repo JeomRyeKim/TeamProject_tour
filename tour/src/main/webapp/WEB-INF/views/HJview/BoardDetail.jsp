@@ -219,7 +219,7 @@ function like_func(){
 <!-- 댓글 -->
 <div class="container">
     <div>
-    <label for="content"><b class="h5">댓글 <input id="commentCnt" class="h5" style="border:none; width: 20px;" value="0" readonly="readonly"></b></label>
+    <label for="content"><b class="h5">댓글 <input id="commentCnt" class="h5" style="border:none; width: 40px;" value="0" readonly="readonly"></b></label>
     <label><input type="checkbox" id="checkLock" value=""> 비밀글</label>
     </div>
     <form name="commentInsertForm">
@@ -339,8 +339,6 @@ function commentList(){
 //           	alert("댓글 리스트 가져오기 성공!");
     		var session_id = document.getElementById('session_id').value;
     		console.log('session_id->' + session_id);
-//             var jsondata = JSON.stringify(data);
-//             alert("jsondata->" + jsondata);
             var a ='';
             
             // 댓글 O
@@ -373,15 +371,16 @@ function commentList(){
                      console.log("m_kind->" + m_kind);
 					 // 비밀글O, 댓글 작성자 or 관리자                  	 
                    	 if(bc_lock == 'y' && (session_id == m_id || session_m_kind == '2')){
-                   		 if(bc_Indent > 0){
-	                   		 a += '<forEach begin="1" end="b_Indent">';
-		         			 a += '	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">';
-					   		 a += '	  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>';
-					   	 	 a += '	</svg>';
-					   		 a += '</forEach>';
-                   		 }
 	                     a += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
-		                 a += '<div id="bc_info" class="commentInfo' + bc_no+'" value="'+ m_id +'"><b>' + m_nickname + '</b> ' + ' ( '+ bc_date +' ) ';
+		                 a += '<div id="bc_info" class="commentInfo' + bc_no+'" value="'+ m_id +'">';
+                   		 if(bc_Indent > 0){
+                   			for (let i = 0; i < bc_Indent; i++){ 
+	   		         			 a += '	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">';
+						   		 a += '	  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>';
+						   	 	 a += '	</svg>';
+                   			}
+                   		 }
+		                 a += '<b>' + m_nickname + '</b> ' + ' ( '+ bc_date +' ) ';
 		                 a += '<a onclick="commentUpdate(' + bc_no + ',\''+ bc_contents +'\', \''+ bc_lock +'\');"> 수정 </a>';
 		                 a += '<a onclick="commentDelete(' + bc_no + ');"> 삭제 </a>';
 		                 a += '<a onclick="commentReply(' + bc_no + ', '+ bc_Group +', '+ bc_Step +', '+ bc_Indent +');"> 답변  </a> </div>';
@@ -389,56 +388,60 @@ function commentList(){
 		                 a += '<div class="replyForm'+bc_no+'"></div></div>';
                    	 }// 비밀글O, 게시글 작성자
                    	 else if(bc_lock == 'y' && session_id == b_id){
-                   		 if(bc_Indent > 0){
-	                   		 a += '<forEach begin="1" end="b_Indent">';
-		         			 a += '	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">';
-					   		 a += '	  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>';
-					   	 	 a += '	</svg>';
-					   		 a += '</forEach>';
-                   		 }
 				   		 a += '</forEach>';
                     	 a += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
- 		                 a += '<div class="commentInfo' + bc_no + '"><b>' + m_nickname + '</b> '+ ' ( '+ bc_date +' )';
+ 		                 a += '<div class="commentInfo' + bc_no + '" value="'+ m_id +'">';
+                   		 if(bc_Indent > 0){
+                   			for (let i = 0; i < bc_Indent; i++){ 
+	   		         			 a += '	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">';
+						   		 a += '	  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>';
+						   	 	 a += '	</svg>';
+                   			}
+                    	 }
+ 		                 a += '<b>' + m_nickname + '</b> '+ ' ( '+ bc_date +' )';
  		                 a += '<a onclick="commentReply(' + bc_no + ', '+ bc_Group +', '+ bc_Step +', '+ bc_Indent +');"> 답변  </a> </div>';
  		                 a += '<div class="commentContent' + bc_no + '"> <p>🔒 ' + bc_contents +'</p></div>';
- 		                a += '<div class="replyForm'+bc_no+'"></div></div>';
+ 		                 a += '<div class="replyForm'+bc_no+'"></div></div>';
                    	 }//  비밀글O, 로그인X 
                    	 else if(bc_lock == 'y' && ${sessionScope.m_id == null}){
-                   		 if(bc_Indent > 0){
-	                   		 a += '<forEach begin="1" end="b_Indent">';
-		         			 a += '	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">';
-					   		 a += '	  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>';
-					   	 	 a += '	</svg>';
-					   		 a += '</forEach>';
-                   		 }
                       	 a += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
-                      	 a += '<div class="commentInfo' + bc_no + '"><b>' +  bc_date +'</b></div>';
+                      	 a += '<div class="commentInfo' + bc_no + '">';
+                   		 if(bc_Indent > 0){
+                   			for (let i = 0; i < bc_Indent; i++){ 
+	   		         			 a += '	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">';
+						   		 a += '	  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>';
+						   	 	 a += '	</svg>';
+                   			}
+                    	 }
+                      	 a += '<b>' +  bc_date +'</b></div>';
                       	 a += '<div class="commentContent' + bc_no + '"> <p>🔒 해당 댓글은 작성자와 운영자만 볼 수 있습니다.</p>';
                          a += '</div></div>'; 
                      }// 비밀글O, 로그인O, 본인 댓글X or 관리자X or 게시글 작성자X
                    	 else if(bc_lock == 'y' && ${sessionScope.m_id != null} && (session_id != m_id || session_m_kind != '2' || session_id != b_id)){
-                   		 if(bc_Indent > 0){
-	                   		 a += '<forEach begin="1" end="b_Indent">';
-		         			 a += '	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">';
-					   		 a += '	  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>';
-					   	 	 a += '	</svg>';
-					   		 a += '</forEach>';
-                   		 }
                       	 a += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
-                      	 a += '<div class="commentInfo' + bc_no + '"><b>' +  bc_date +'</b></div>';
+                      	 a += '<div class="commentInfo' + bc_no + '" value="'+ m_id +'">';
+                   		 if(bc_Indent > 0){
+                   			for (let i = 0; i < bc_Indent; i++){ 
+	   		         			 a += '	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">';
+						   		 a += '	  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>';
+						   	 	 a += '	</svg>';
+                   			}
+                    	 }
+                      	 a += '<b>' +  bc_date +'</b></div>';
                       	 a += '<div class="commentContent' + bc_no + '"> <p>🔒 해당 댓글은 작성자와 운영자만 볼 수 있습니다.</p>';
                          a += '</div></div>'; 
             		 }// 비밀글 X, 로그인O, 본인 댓글 or 관리자
                      else if(bc_lock == 'n' && ${sessionScope.m_id != null} && (session_id == m_id || session_m_kind == '2')){
-                   		 if(bc_Indent > 0){
-	                   		 a += '<forEach begin="1" end="b_Indent">';
-		         			 a += '	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">';
-					   		 a += '	  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>';
-					   	 	 a += '	</svg>';
-					   		 a += '</forEach>';
-                   		 }
                     	 a += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
-		                 a += '<div id="bc_info" class="commentInfo' + bc_no+'" value="'+ m_id +'"><b>' + m_nickname + '</b> ' + ' ( '+ bc_date +' ) ';
+		                 a += '<div id="bc_info" class="commentInfo' + bc_no+'" value="'+ m_id +'">';
+                    	 if(bc_Indent > 0){
+                   			for (let i = 0; i < bc_Indent; i++){ 
+	   		         			 a += '	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">';
+						   		 a += '	  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>';
+						   	 	 a += '	</svg>';
+                   			}
+                    	 }
+		                 a += '<b>' + m_nickname + '</b> ' + ' ( '+ bc_date +' ) ';
 		                 a += '<a onclick="commentUpdate(' + bc_no + ',\''+ bc_contents +'\', \''+ bc_lock +'\');"> 수정 </a>';
 		                 a += '<a onclick="commentDelete(' + bc_no + ');"> 삭제 </a>';
 		                 a += '<a onclick="commentReply(' + bc_no + ', '+ bc_Group +', '+ bc_Step +', '+ bc_Indent +');"> 답변  </a> </div>';
@@ -446,31 +449,33 @@ function commentList(){
 		                 a += '<div class="replyForm'+bc_no+'"></div></div>';
                      } // 비밀글 X, 로그인X
                      else if(bc_lock == 'n' && ${sessionScope.m_id == null}){
-                   		 if(bc_Indent > 0){
-	                   		 a += '<forEach begin="1" end="b_Indent">';
-		         			 a += '	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">';
-					   		 a += '	  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>';
-					   	 	 a += '	</svg>';
-					   		 a += '</forEach>';
-                   		 }
                     	 a += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
- 		                 a += '<div class="commentInfo' + bc_no + '"><b>' + m_nickname + '</b> '+ ' ( '+ bc_date +' ) </div>';
+ 		                 a += '<div class="commentInfo' + bc_no + '">';
+                    	 if(bc_Indent > 0){
+                   			for (let i = 0; i < bc_Indent; i++){ 
+	   		         			 a += '	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">';
+						   		 a += '	  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>';
+						   	 	 a += '	</svg>';
+                   			}
+                    	 }
+ 		                 a += '<b>' + m_nickname + '</b> '+ ' ( '+ bc_date +' ) </div>';
  		                 a += '<div class="commentContent' + bc_no + '"> <p> ' + bc_contents +'</p>';
  		                 a += '</div></div>'; 
                      } // 비밀글 X, 로그인O, 본인 댓글X or 관리자X
                      else if(bc_lock == 'n' && ${sessionScope.m_id != null} && (session_id != m_id || session_m_kind != '2')){
-                   		 if(bc_Indent > 0){
-	                   		 a += '<forEach begin="1" end="b_Indent">';
-		         			 a += '	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">';
-					   		 a += '	  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>';
-					   	 	 a += '	</svg>';
-					   		 a += '</forEach>';
-                   		 }
                     	 a += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
- 		                 a += '<div class="commentInfo' + bc_no + '"><b>' + m_nickname + '</b> '+ ' ( '+ bc_date +' )';
+ 		                 a += '<div class="commentInfo' + bc_no + '" value="'+ m_id +'">';
+                    	 if(bc_Indent > 0){
+                   			for (let i = 0; i < bc_Indent; i++){ 
+	   		         			 a += '	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16">';
+						   		 a += '	  <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>';
+						   	 	 a += '	</svg>';
+                   			}
+                    	 }
+ 		                 a += '<b>' + m_nickname + '</b> '+ ' ( '+ bc_date +' )';
  		                 a += '<a onclick="commentReply(' + bc_no + ', '+ bc_Group +', '+ bc_Step +', '+ bc_Indent +');"> 답변  </a> </div>';
  		                 a += '<div class="commentContent' + bc_no + '"> <p> ' + bc_contents +'</p></div>';
- 		                a += '<div class="replyForm'+bc_no+'"></div></div>';
+ 		                 a += '<div class="replyForm'+bc_no+'"></div></div>';
                      }
                 } // for(const i in data) 끝
             } // 댓글 O끝
@@ -565,18 +570,12 @@ function commentReply(bc_no, bc_Group, bc_Step, bc_Indent){
     a += '<input type="text" class="form-control" name="bc_contents'+bc_no+'" placeholder="내용을 입력하세요."/>';
     a += '<span class="input-reply-btn">';
     a += '<label><input type="checkbox" id="commentLock" name="commentLock" value=""> 비밀글 </label>';
-    a += '<input type="hidden" id="c_lock" name="bc_lock'+bc_no+'" value="n">';
+    a += '<input type="hidden" id="c_lock" name="bc_lock'+bc_no+'" value="">';
     a += '<button class="btn btn-outline-primary" type="button" onclick="commentReplyProc('+bc_no+');"> 등록</button></span>';
     a += '</div></form>';
 	
     $('.replyForm'+bc_no).html(a);
 }
-//대댓글 등록 버튼 클릭시 
-// $('[name=commentReplyBtn]').click(function(){ 
-//     var insertReply = $('[name=commentReplyForm]').serialize(); 
-//     alert("insertReply->" + insertReply); 
-//     commentReplyProc(insertReply);
-// });
 //대댓글 달기
 function commentReplyProc(bc_no){
 	var ReplyB_kind = $('[name=b_kind'+bc_no+']').val();
@@ -598,17 +597,18 @@ function commentReplyProc(bc_no){
 	console.log("ReplyBc_Indent->" + ReplyBc_Indent);
 	console.log("ReplyBc_contents->" + ReplyBc_contents);
 	console.log("ReplyBc_lock->" + ReplyBc_lock);
+	
     $.ajax({
         url : '<%=context%>/HJCommentReply',
         type : 'post',
         data : {b_kind : ReplyB_kind, b_no : ReplyB_no, m_id : ReplyM_id, bc_no : ReplyBc_no, bc_Group : ReplyBc_Group,
-        		bc_Step : ReplyBc_Step, bc_Indent : ReplyBc_Indent, bc_conents : ReplyBc_contents, bc_lock : ReplyBc_lock},
+        		bc_Step : ReplyBc_Step, bc_Indent : ReplyBc_Indent, bc_contents : ReplyBc_contents, bc_lock : ReplyBc_lock},
         dataType:'text',
         success : function(data){
             alert("댓글 reply 성공!");
             alert("data->" + data);
             commentList(); //댓글 작성 후 댓글 목록 reload
-            $('[name=commentReplyForm]').val('');
+//             $('[name=commentReplyForm]').val('');
         },
         error:function(){
         	alert("댓글 reply 에러!");
